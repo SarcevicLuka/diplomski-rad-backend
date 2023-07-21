@@ -79,7 +79,7 @@ diesel::table! {
         nick_name -> Varchar,
         #[max_length = 255]
         password -> Varchar,
-        avatar -> Nullable<Text>,
+        avatar -> Text,
         created_at -> Timestamptz,
         updated_at -> Timestamptz,
     }

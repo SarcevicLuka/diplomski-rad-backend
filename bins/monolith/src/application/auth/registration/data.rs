@@ -43,7 +43,7 @@ impl Validation for RegistrationUserData {
         vec![
             modifier_lowercase!(email),
             modifier_trim!(first_name),
-            modifier_trim!(last_name),
+            modifier_trim!(last_name)
         ]
     }
 }
@@ -78,7 +78,7 @@ impl RegistrationUserData {
 
         let avatar = match self.avatar {
             Some(v) => v,
-            None => "".to_string(),
+            None => "".to_string()
         };
 
         CreateNewUserData {

@@ -18,7 +18,7 @@ pub struct User {
     pub last_name: String,
     pub nick_name: String,
     pub password: String,
-    pub avatar: Option<String>,
+    pub avatar: String,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
 }
@@ -87,7 +87,7 @@ impl From<User> for CreateNewUserData {
             last_name: value.last_name, 
             nick_name: value.nick_name,
             password: value.password,
-            avatar: value.avatar.unwrap()
+            avatar: value.avatar
         }
     }
 }
@@ -100,7 +100,7 @@ pub struct AuthenticatedUser {
     pub first_name: String,
     pub last_name: String,
     pub nick_name: String,
-    pub avatar: Option<String>,
+    pub avatar: String,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
 }
@@ -137,7 +137,7 @@ pub fn testable(
         last_name: last_name.unwrap_or("Doe").to_string(),
         nick_name: "johnny".to_string(),
         password: User::hash_password(password.unwrap_or("test")).unwrap(),
-        avatar: Some("test/image".to_string()),
+        avatar: "test/image".to_string(),
         created_at: NaiveDateTime::parse_from_str("2023-04-19 08:00:00", "%Y-%m-%d %H:%M:%S")
             .unwrap(),
         updated_at: NaiveDateTime::parse_from_str("2023-04-19 08:00:00", "%Y-%m-%d %H:%M:%S")
