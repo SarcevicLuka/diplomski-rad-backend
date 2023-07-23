@@ -36,7 +36,9 @@ impl Validation for RegistrationUserData {
             rule_length_min!(last_name, 2),
             rule_required!(nick_name),
             rule_length_max!(first_name, 50),
-            rule_length_min!(first_name, 2)
+            rule_length_min!(first_name, 2),
+            rule_required!(avatar),
+            rule_length_min!(avatar, 10)
         ]
     }
     fn modifiers(&self) -> Vec<Modifier<Self>> {
