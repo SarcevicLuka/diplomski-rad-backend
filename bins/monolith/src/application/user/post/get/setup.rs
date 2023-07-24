@@ -3,7 +3,11 @@ use actix_web::{web, web::get};
 use infrastructure::db::Postgres;
 use super::{
     domain::GetPost, 
-    infrastructure::PgRepository, http::handle_get_post
+    infrastructure::PgRepository, 
+    http::{
+        http_get_post::handle_get_post,
+        http_get_users_posts::handle_users_posts
+    }
 };
 
 #[allow(dead_code)]
@@ -24,11 +28,10 @@ pub fn routes(
             GetPost<PgRepository>
         >))
     );
-    //cfg.service(
-    //    web::resource("/{user_id}/posts")
-    //    .route(get().to(handle_get_all_posts::<
-    //        GetPost<PgRepository>
-    //    >))
-    //    .wrap(crate::middleware::AuthLogin)
-    //);
+    cfg.service(
+        web::resource("/{user_id}/posts")
+        .route(get().to(handle_users_posts::<
+            GetPost<PgRepository>
+        >))
+    );
 }

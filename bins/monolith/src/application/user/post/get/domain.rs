@@ -1,6 +1,6 @@
 use async_trait::async_trait;
 use error::Error;
-use super::contract::{PgRepositoryContract, GetPostsContract};
+use super::{contract::{PgRepositoryContract, GetPostsContract}, data::{UserPostsAttributes, PaginatedUsersPostsResponse}};
 use support::store::models::post::Post;
 
 pub struct GetPost<
@@ -26,5 +26,17 @@ where
         Ok(
             post
         )
+    }
+
+    async fn get_users_posts_paginated(
+        &self,
+        user_id: &str,
+        attibutes: UserPostsAttributes
+    ) -> Result<PaginatedUsersPostsResponse, Error> {
+        self
+            .repository
+            .get_users_posts_paginated(user_id, attibutes)
+            .await
+            .map(PaginatedUsersPostsResponse::from)
     }
 }
