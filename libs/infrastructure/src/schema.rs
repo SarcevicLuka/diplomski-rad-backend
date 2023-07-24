@@ -76,8 +76,6 @@ diesel::table! {
         #[max_length = 255]
         last_name -> Varchar,
         #[max_length = 255]
-        nick_name -> Varchar,
-        #[max_length = 255]
         password -> Varchar,
         avatar -> Text,
         created_at -> Timestamptz,
@@ -91,8 +89,6 @@ diesel::table! {
         id -> Varchar,
         #[max_length = 36]
         watch_id -> Varchar,
-        #[max_length = 36]
-        title -> Varchar,
         data -> Nullable<Text>,
     }
 }
@@ -105,10 +101,8 @@ diesel::table! {
         brand -> Varchar,
         #[max_length = 255]
         model -> Varchar,
-        #[max_length = 255]
-        diameter -> Varchar,
-        #[max_length = 255]
-        lug_width -> Varchar,
+        diameter -> Int4,
+        lug_width -> Int4,
         #[max_length = 255]
         case_material -> Varchar,
         #[max_length = 255]

@@ -94,7 +94,6 @@ fn create_registration_data() -> RegistrationUserData {
         email: Some("testmail@gmail.com".to_string()), 
         first_name: Some("John".to_string()), 
         last_name: Some("Doe".to_string()), 
-        nick_name: Some("Johnny".to_string()),
         password: Some("test".to_string()),
         avatar: Some("test/image".to_string())
     }

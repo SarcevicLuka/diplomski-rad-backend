@@ -7,6 +7,7 @@ pub fn configure(
     cfg: &mut web::ServiceConfig
 ) {
     auth(postgres.clone(), cfg);
+    user(postgres.clone(), cfg);
 }
 
 fn auth(
@@ -14,5 +15,13 @@ fn auth(
     cfg: &mut web::ServiceConfig
 ) {
     crate::application::auth::authentication::setup::routes(postgres.clone(), cfg);
-    crate::application::auth::registration::setup::routes(postgres, cfg)
+    crate::application::auth::registration::setup::routes(postgres.clone(), cfg);
+}
+
+fn user(
+    postgres: Arc<Postgres>,
+    cfg: &mut web::ServiceConfig
+) {
+    crate::application::user::post::create::setup::routes(postgres.clone(), cfg);
+    crate::application::user::post::get::setup::routes(postgres.clone(), cfg);
 }

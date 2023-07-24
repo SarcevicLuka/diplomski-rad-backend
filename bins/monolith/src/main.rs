@@ -1,5 +1,5 @@
 use std::sync::Arc;
-use infrastructure::db::{Postgres};
+use infrastructure::db::Postgres;
 
 #[allow(unused_imports)]
 #[macro_use]

@@ -10,7 +10,6 @@ pub struct RegistrationUserData {
     pub email: Option<String>,
     pub first_name: Option<String>,
     pub last_name: Option<String>,
-    pub nick_name: Option<String>,
     pub avatar: Option<String>,
     pub password: Option<String>,
 }
@@ -34,9 +33,6 @@ impl Validation for RegistrationUserData {
             rule_required!(last_name),
             rule_length_max!(last_name, 50),
             rule_length_min!(last_name, 2),
-            rule_required!(nick_name),
-            rule_length_max!(first_name, 50),
-            rule_length_min!(first_name, 2),
             rule_required!(avatar),
             rule_length_min!(avatar, 10)
         ]
@@ -68,11 +64,6 @@ impl RegistrationUserData {
             None => "".to_string(),
         };
 
-        let nick_name = match self.nick_name {
-            Some(v) => v,
-            None => "".to_string(),
-        };
-
         let password = match self.password {
             Some(v) => v,
             None => "".to_string(),
@@ -87,7 +78,6 @@ impl RegistrationUserData {
             email,
             first_name,
             last_name,
-            nick_name,
             password,
             avatar
         }
