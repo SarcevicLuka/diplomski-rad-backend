@@ -4,7 +4,6 @@ CREATE TABLE users
     email      VARCHAR(255) NOT NULL,
     first_name VARCHAR(255) NOT NULL,
     last_name  VARCHAR(255) NOT NULL,
-    nick_name  VARCHAR(255) NOT NULL,
     "password" VARCHAR(255) NOT NULL,
     avatar     TEXT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -17,5 +16,4 @@ SELECT diesel_manage_updated_at('users');
 CREATE INDEX IF NOT EXISTS users_email        ON users USING BTREE(email);
 CREATE INDEX IF NOT EXISTS users_first_name   ON users USING BTREE(first_name);
 CREATE INDEX IF NOT EXISTS users_last_name    ON users USING BTREE(last_name);
-CREATE INDEX IF NOT EXISTS users_nick_name    ON users USING BTREE(nick_name);
-CREATE INDEX IF NOT EXISTS users_nick_avatar  ON users USING BTREE(avatar);
+CREATE INDEX IF NOT EXISTS users_avatar  ON users USING BTREE(avatar);
