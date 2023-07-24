@@ -3,7 +3,7 @@ use super::contract::{
     SessionContract, 
     PgRepositoryContract
 };
-use support::store::models::user::AuthenticatedUser;
+use support::store::models::user::DisplayUser;
 use error::Error;
 
 pub struct Session<A, B> {
@@ -17,7 +17,7 @@ where
     B: PgRepositoryContract,
 {
     /// Extract user email from jwt and find that user in database
-    fn extract_valid_user(&mut self) -> Result<AuthenticatedUser, Error> {
+    fn extract_valid_user(&mut self) -> Result<DisplayUser, Error> {
         let user_email = self.request.try_extract_email_from_jwt()?;
 
         let user = match self.repository.get_user_by_email(&user_email) {
@@ -26,7 +26,7 @@ where
                 Error::Forbidden("user from jwt not found in database".to_string())
             ),
         };
-        let authenticated_user = AuthenticatedUser::from(user);
+        let authenticated_user = DisplayUser::from(user);
 
         Ok(authenticated_user)
     }

@@ -2,7 +2,7 @@ use std::vec;
 use chrono::Utc;
 use error::Error;
 use serde::{Deserialize, Serialize};
-use crate::store::models::user::AuthenticatedUser;
+use crate::store::models::user::DisplayUser;
 use crate::store::models::user;
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -14,7 +14,7 @@ pub struct Claims {
 }
 
 /// Function that generates JWT token
-pub fn generate(user: &AuthenticatedUser) -> Result<String, Error> {
+pub fn generate(user: &DisplayUser) -> Result<String, Error> {
     let mut jwt_params = 
         config::get_multiple_default(
             vec![("JWT_SECRET", "not_so_strong_secret"), ("JWT_LIFETIME_IN_SECONDS", "600")]
@@ -54,7 +54,7 @@ pub fn verify(token: String, secret: &str) -> Result<Claims, Error> {
 /// Create testable jwt token
 pub fn testable() -> String {
     let user = user::testable("test@test.com", None, None, None, None);
-    let authenticated_user = AuthenticatedUser::from(user);
+    let authenticated_user = DisplayUser::from(user);
     
     generate(&authenticated_user).unwrap()
 }

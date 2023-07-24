@@ -39,6 +39,14 @@ impl User {
             .map_err(Error::from)
     }
 
+    /// Helper method to find user by id
+    pub fn get_by_id(user_id: &str, connection: &mut DbConnection) -> Result<User, Error> {
+        users::table
+            .filter(users::id.eq(user_id))
+            .get_result::<User>(connection)
+            .map_err(Error::from)
+    }
+
     /// Helper method to hash a password
     pub fn hash_password(password: &str) -> Result<String, Error> {
         match bcrypt::hash(password, bcrypt::DEFAULT_COST) {
@@ -60,7 +68,7 @@ impl User {
         }
     }
 
-    pub fn generate_jwt_token(user: &AuthenticatedUser) -> Result<String, Error> {
+    pub fn generate_jwt_token(user: &DisplayUser) -> Result<String, Error> {
         crate::helpers::jwt::generate(user)
     }
 }
@@ -91,7 +99,7 @@ impl From<User> for CreateNewUserData {
 
 #[derive(Queryable, Serialize, Deserialize, PartialEq, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
-pub struct AuthenticatedUser {
+pub struct DisplayUser {
     pub id: String,
     pub email: String,
     pub first_name: String,
@@ -101,7 +109,7 @@ pub struct AuthenticatedUser {
     pub updated_at: NaiveDateTime,
 }
 
-impl From<User> for AuthenticatedUser {
+impl From<User> for DisplayUser {
     fn from(value: User) -> Self {
         Self { 
             id: value.id, 

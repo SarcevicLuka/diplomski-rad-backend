@@ -23,13 +23,13 @@ pub fn routes(
     
     cfg.app_data(web::Data::new(service));
     cfg.service(
-        web::resource("/{user_id}/posts/{post_id}")
+        web::resource("/user/{user_id}/posts/{post_id}")
         .route(get().to(handle_get_post::<
             GetPost<PgRepository>
         >))
     );
     cfg.service(
-        web::resource("/{user_id}/posts")
+        web::resource("/user/{user_id}/posts")
         .route(get().to(handle_users_posts::<
             GetPost<PgRepository>
         >))

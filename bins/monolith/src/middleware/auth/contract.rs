@@ -1,10 +1,10 @@
 //use async_trait::async_trait;
 use error::Error;
-use support::store::models::user::{User, AuthenticatedUser};
+use support::store::models::user::{User, DisplayUser};
 
 #[cfg_attr(test, mockall::automock)]
 pub trait SessionContract {
-    fn extract_valid_user(&mut self) -> Result<AuthenticatedUser, Error>;
+    fn extract_valid_user(&mut self) -> Result<DisplayUser, Error>;
 }
 
 #[cfg_attr(test, mockall::automock)]

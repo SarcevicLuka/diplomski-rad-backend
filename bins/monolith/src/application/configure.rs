@@ -22,6 +22,7 @@ fn user(
     postgres: Arc<Postgres>,
     cfg: &mut web::ServiceConfig
 ) {
+    crate::application::user::get::setup::routes(postgres.clone(), cfg);
     crate::application::user::post::create::setup::routes(postgres.clone(), cfg);
     crate::application::user::post::get::setup::routes(postgres.clone(), cfg);
 }

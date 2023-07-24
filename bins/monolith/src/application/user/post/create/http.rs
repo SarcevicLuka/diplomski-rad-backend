@@ -1,7 +1,7 @@
 use actix_web::{HttpRequest, web, HttpResponse, HttpMessage};
 use error::Error;
 use validr::Validation;
-use support::store::models::user::AuthenticatedUser;
+use support::store::models::user::DisplayUser;
 use super::{contract::CreatePostContract, data::UserPostData};
 
 pub async fn handle_create_post<T: CreatePostContract>(
@@ -9,7 +9,7 @@ pub async fn handle_create_post<T: CreatePostContract>(
     service: web::Data<T>,
     data: web::Json<UserPostData>
 ) -> Result<HttpResponse, Error> {
-    let Some(user) = req.extensions_mut().remove::<AuthenticatedUser>() else {
+    let Some(user) = req.extensions_mut().remove::<DisplayUser>() else {
         return Err(Error::Unauthorized("not authorized".to_string()));
     };
 

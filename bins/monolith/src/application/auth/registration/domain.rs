@@ -1,6 +1,6 @@
 use error::Error;
 use async_trait::async_trait;
-use support::store::models::user::{AuthenticatedUser, User};
+use support::store::models::user::{DisplayUser, User};
 use super::{contract::{
     PgRepositoryContract, 
     PgServiceContract, 
@@ -28,7 +28,7 @@ where
     async fn register(
         &self, 
         mut data: RegistrationUserData
-    ) -> Result<(AuthenticatedUser, String), Error> {
+    ) -> Result<(DisplayUser, String), Error> {
         let email = match &data.email {
             Some(email) => email.to_string().to_lowercase(),
             None => return Err(Error::Request("Invalid credentials".to_string())),
@@ -47,7 +47,7 @@ where
         let auth_user = self.service
             .create_user(data.insertable())
             .await
-            .map(AuthenticatedUser::from)?;
+            .map(DisplayUser::from)?;
     
         let token = User::generate_jwt_token(&auth_user)?;
 

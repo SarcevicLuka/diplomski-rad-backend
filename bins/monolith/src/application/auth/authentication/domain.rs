@@ -1,6 +1,6 @@
 use async_trait::async_trait;
 use error::Error;
-use support::store::models::user::{AuthenticatedUser, User};
+use support::store::models::user::{DisplayUser, User};
 use crate::application::auth::authentication::contract::PgRepositoryContract;
 use super::{
     contract::LoginContract, 
@@ -25,7 +25,7 @@ where
     async fn login(
         &self,
         data: LoginUserData
-    ) -> Result<(AuthenticatedUser, String), Error> {
+    ) -> Result<(DisplayUser, String), Error> {
         let email = match &data.email {
             Some(email) => email.to_string().to_lowercase(),
             None => return Err(Error::Request("Invalid credentials".to_string())),
@@ -43,7 +43,7 @@ where
             return Err(Error::Forbidden("Invalid credentials".to_string()));
         };
         
-        let authenticated_user = AuthenticatedUser::from(user);
+        let authenticated_user = DisplayUser::from(user);
         let token = User::generate_jwt_token(&authenticated_user)?;
 
         Ok((authenticated_user, token))
