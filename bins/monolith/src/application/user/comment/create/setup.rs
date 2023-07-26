@@ -1,9 +1,9 @@
 use std::sync::Arc;
-use actix_web::{web, web::get};
+use actix_web::{web, web::post};
 use infrastructure::db::Postgres;
 use super::{
-    domain::GetUser, 
-    infrastructure::PgRepository, http::handle_get_user
+    domain::CreateComment, 
+    infrastructure::PgRepository, http::handle_create_comment
 };
 
 #[allow(dead_code)]
@@ -11,7 +11,7 @@ pub fn routes(
     postgres: Arc<Postgres>, 
     cfg: &mut web::ServiceConfig
 ) {
-    let service = GetUser {
+    let service = CreateComment {
         repository: PgRepository {
             pg_pool: postgres,
         },
@@ -19,9 +19,9 @@ pub fn routes(
     
     cfg.app_data(web::Data::new(service));
     cfg.service(
-        web::resource("/user/{user_id}")
-        .route(get().to(handle_get_user::<
-            GetUser<PgRepository>
+        web::resource("/user/{user_id}/post/{post_id}/comment/create")
+        .route(post().to(handle_create_comment::<
+            CreateComment<PgRepository>
         >))
         .wrap(crate::middleware::AuthLogin)
     );
