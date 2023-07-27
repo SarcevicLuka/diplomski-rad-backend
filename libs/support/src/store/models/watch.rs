@@ -7,8 +7,9 @@ use infrastructure::{
 use error::Error;
 use serde::{Serialize, Deserialize};
 
-#[derive(Insertable, Queryable, Serialize, Deserialize, PartialEq, Debug, Clone)]
+#[derive(Insertable, Queryable, Serialize, Deserialize, PartialEq, Eq, Debug, Clone)]
 #[diesel(table_name = watches)]
+#[diesel(belongs_to(Post))]
 #[diesel(treat_none_as_null = true)]
 #[serde(rename_all = "camelCase")]
 pub struct Watch {

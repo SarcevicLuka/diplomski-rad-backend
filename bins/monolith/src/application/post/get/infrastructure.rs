@@ -4,7 +4,7 @@ use diesel::{QueryDsl, ExpressionMethods};
 use error::Error;
 use infrastructure::{db::Postgres, schema::posts};
 use length_aware_paginator::{Response, Paginate};
-use support::store::models::post::Post;
+use support::store::models::{post::{Post, DisplayPost}, watch::Watch};
 use super::{contract::PgRepositoryContract, data::UserPostsAttributes};
 
 pub struct PgRepository {
@@ -17,13 +17,21 @@ impl PgRepositoryContract for PgRepository {
     async fn get_post(
         &self,
         post_id: &str
-    ) -> Result<Post, Error> {
+    ) -> Result<DisplayPost, Error> {
         let mut conn = self.pg_pool.connection()?;
 
         let post = Post::get_by_id(post_id, &mut conn)?;
+        let watch = Watch::get_by_id(&post.watch_id, &mut conn)?;
 
         Ok(
-            post
+            DisplayPost {
+                id: post.id,
+                user_id: post.user_id, 
+                watch_data: watch, 
+                text: post.review, 
+                created_at: post.created_at, 
+                updated_at: post.updated_at 
+            }
         )
     } 
 
@@ -33,7 +41,6 @@ impl PgRepositoryContract for PgRepository {
         user_id: &str,
         attributes: UserPostsAttributes
     ) -> Result<Response<Post>, Error> {
-        debug!("{:#?}", attributes);
         let mut conn = self.pg_pool.connection()?;
 
         let query = 

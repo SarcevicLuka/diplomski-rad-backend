@@ -7,6 +7,8 @@ use infrastructure::{
 use error::Error;
 use serde::{Serialize, Deserialize};
 
+use super::watch::Watch;
+
 /// Struct for holding post data fron database
 #[derive(Insertable, Queryable, Serialize, Deserialize, PartialEq, Debug, Clone)]
 #[diesel(table_name = posts)]
@@ -47,6 +49,18 @@ impl From<Post> for CreateNewPostData {
             review: value.review,
         }
     }
+}
+
+/// Struct for holding post data to be displayed
+#[derive(Serialize, Deserialize, PartialEq, Eq, Debug, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct DisplayPost {
+    pub id: String,
+    pub user_id: String,
+    pub watch_data: Watch,
+    pub text: String,
+    pub created_at: NaiveDateTime,
+    pub updated_at: NaiveDateTime,
 }
 
 /// Struct for creating Watch from post data

@@ -1,7 +1,7 @@
 use async_trait::async_trait;
 use error::Error;
 use super::{contract::{PgRepositoryContract, GetPostsContract}, data::{UserPostsAttributes, PaginatedUsersPostsResponse}};
-use support::store::models::post::Post;
+use support::store::models::post::DisplayPost;
 
 pub struct GetPost<
     A: PgRepositoryContract,
@@ -17,7 +17,7 @@ where
     async fn get_post(
         &self,
         post_id: &str
-    ) -> Result<Post, Error> {
+    ) -> Result<DisplayPost, Error> {
         let post = self
             .repository
             .get_post(post_id)
