@@ -1,6 +1,7 @@
 use std::sync::Arc;
 use async_trait::async_trait;
 use diesel::{QueryDsl, ExpressionMethods};
+use diesel::dsl::sql;
 use error::Error;
 use infrastructure::{db::Postgres, schema::posts};
 use length_aware_paginator::{Response, Paginate};
@@ -40,13 +41,19 @@ impl PgRepositoryContract for PgRepository {
         &self,
         user_id: &str,
         attributes: UserPostsAttributes
-    ) -> Result<Response<Post>, Error> {
+    ) -> Result<Response<(Post, i64)>, Error> {
+        use infrastructure::schema::post_likes::dsl::post_likes as post_likes_count;
+
         let mut conn = self.pg_pool.connection()?;
 
-        let query = 
+        let mut query = 
             posts::table
-                .into_boxed()
-                .filter(posts::user_id.eq(user_id));
+                .left_join(post_likes_count)
+                .group_by(posts::id)
+                .select((posts::all_columns, sql::<diesel::sql_types::BigInt>("COUNT(post_likes.id) as num_likes")))
+                .into_boxed();
+                
+        query = query.filter(posts::user_id.eq(user_id));
 
         query
             .page(attributes.page)

@@ -30,5 +30,6 @@ fn user(
 
     crate::application::post::create::setup::routes(postgres.clone(), cfg);
     crate::application::post::edit::setup::routes(postgres.clone(), cfg);
-    crate::application::post::get::setup::routes(postgres, cfg);
+    crate::application::post::get::setup::routes(postgres.clone(), cfg);
+    crate::application::post::like::setup::routes(postgres, cfg);
 }

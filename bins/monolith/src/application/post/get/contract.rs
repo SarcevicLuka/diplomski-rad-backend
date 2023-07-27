@@ -15,5 +15,5 @@ pub trait GetPostsContract {
 #[async_trait]
 pub trait PgRepositoryContract {
     async fn get_post(&self, post_id: &str) -> Result<DisplayPost, Error>;
-    async fn get_users_posts_paginated(&self, user_id: &str, attibutes: UserPostsAttributes) -> Result<Response<Post>, Error>;
+    async fn get_users_posts_paginated(&self, user_id: &str, attibutes: UserPostsAttributes) -> Result<Response<(Post, i64)>, Error>;
 }
