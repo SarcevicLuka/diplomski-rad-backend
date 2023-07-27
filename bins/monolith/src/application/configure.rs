@@ -7,7 +7,7 @@ pub fn configure(
     cfg: &mut web::ServiceConfig
 ) {
     auth(postgres.clone(), cfg);
-    user(postgres.clone(), cfg);
+    user(postgres, cfg);
 }
 
 fn auth(
@@ -15,7 +15,7 @@ fn auth(
     cfg: &mut web::ServiceConfig
 ) {
     crate::application::auth::authentication::setup::routes(postgres.clone(), cfg);
-    crate::application::auth::registration::setup::routes(postgres.clone(), cfg);
+    crate::application::auth::registration::setup::routes(postgres, cfg);
 }
 
 fn user(
@@ -24,10 +24,10 @@ fn user(
 ) {
     crate::application::user::get::setup::routes(postgres.clone(), cfg);
 
-    crate::application::user::comment::create::setup::routes(postgres.clone(), cfg);
-    crate::application::user::comment::edit::setup::routes(postgres.clone(), cfg);
-    crate::application::user::comment::get::setup::routes(postgres.clone(), cfg);
+    crate::application::post::comment::create::setup::routes(postgres.clone(), cfg);
+    crate::application::post::comment::edit::setup::routes(postgres.clone(), cfg);
+    crate::application::post::comment::get::setup::routes(postgres.clone(), cfg);
 
-    crate::application::user::post::create::setup::routes(postgres.clone(), cfg);
-    crate::application::user::post::get::setup::routes(postgres.clone(), cfg);
+    crate::application::post::create::setup::routes(postgres.clone(), cfg);
+    crate::application::post::get::setup::routes(postgres, cfg);
 }
