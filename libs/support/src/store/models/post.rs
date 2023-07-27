@@ -2,7 +2,7 @@ use chrono::NaiveDateTime;
 use diesel::{Insertable, Queryable, RunQueryDsl, QueryDsl, ExpressionMethods};
 use infrastructure::{
     db::DbConnection,
-    schema::posts
+    schema::{posts, posts::dsl::posts as edit_post}
 };
 use error::Error;
 use serde::{Serialize, Deserialize};
@@ -39,6 +39,24 @@ impl Post {
             .get_result::<Post>(connection)
             .map_err(Error::from)
     }
+
+    /// Helper method to find post by id
+    pub fn get_watch_id(id: &str, connection: &mut DbConnection) -> Result<String, Error> {
+        posts::table
+            .filter(posts::id.eq(id))
+            .select(posts::watch_id)
+            .get_result(connection)
+            .map_err(Error::from)
+    }
+
+    /// Helper method to edit post
+    pub fn edit(id: &str, data: EditPostData, connection: &mut DbConnection) -> Result<Post, Error> {
+        diesel::update(edit_post)
+            .filter(posts::id.eq(id))
+            .set(posts::review.eq(data.review))
+            .get_result::<Post>(connection)
+            .map_err(Error::from)
+    }
 }
 
 impl From<Post> for CreateNewPostData {
@@ -61,6 +79,14 @@ pub struct DisplayPost {
     pub text: String,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
+}
+
+/// Struct for creating Watch from post data
+#[derive(Serialize, Deserialize, Insertable, PartialEq, Eq, Debug, Clone)]
+#[diesel(table_name = posts)]
+#[serde(rename_all = "camelCase")]
+pub struct EditPostData {
+    pub review: String,
 }
 
 /// Struct for creating Watch from post data

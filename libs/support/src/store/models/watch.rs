@@ -1,15 +1,14 @@
 use chrono::NaiveDateTime;
-use diesel::{Insertable, Queryable, RunQueryDsl, QueryDsl, ExpressionMethods};
+use diesel::{Insertable, Queryable, RunQueryDsl, QueryDsl, ExpressionMethods, AsChangeset};
 use infrastructure::{
     db::DbConnection,
-    schema::watches
+    schema::{watches, watches::dsl::watches as edit_watch}
 };
 use error::Error;
 use serde::{Serialize, Deserialize};
 
 #[derive(Insertable, Queryable, Serialize, Deserialize, PartialEq, Eq, Debug, Clone)]
 #[diesel(table_name = watches)]
-#[diesel(belongs_to(Post))]
 #[diesel(treat_none_as_null = true)]
 #[serde(rename_all = "camelCase")]
 pub struct Watch {
@@ -40,6 +39,15 @@ impl Watch {
             .get_result::<Watch>(connection)
             .map_err(Error::from)
     }
+
+    /// Helper method to edit watch by id
+    pub fn edit(id: &str, data: CreateNewWatchData, connection: &mut DbConnection) -> Result<Watch, Error> {
+        diesel::update(edit_watch)
+            .filter(watches::id.eq(id))
+            .set(data)
+            .get_result::<Watch>(connection)
+            .map_err(Error::from)
+    }
 }
 
 impl From<Watch> for CreateNewWatchData {
@@ -56,7 +64,7 @@ impl From<Watch> for CreateNewWatchData {
 }
 
 /// Struct for creating Watch from post data
-#[derive(Serialize, Deserialize, Insertable, PartialEq, Eq, Debug, Clone)]
+#[derive(Serialize, Deserialize, Insertable, AsChangeset, PartialEq, Eq, Debug, Clone)]
 #[diesel(table_name = watches)]
 #[serde(rename_all = "camelCase")]
 pub struct CreateNewWatchData {

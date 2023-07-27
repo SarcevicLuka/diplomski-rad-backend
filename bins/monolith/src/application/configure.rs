@@ -29,5 +29,6 @@ fn user(
     crate::application::post::comment::get::setup::routes(postgres.clone(), cfg);
 
     crate::application::post::create::setup::routes(postgres.clone(), cfg);
+    crate::application::post::edit::setup::routes(postgres.clone(), cfg);
     crate::application::post::get::setup::routes(postgres, cfg);
 }
