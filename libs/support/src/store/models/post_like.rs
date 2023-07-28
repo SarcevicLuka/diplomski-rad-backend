@@ -1,5 +1,5 @@
 use chrono::NaiveDateTime;
-use diesel::{Insertable, Queryable, RunQueryDsl};
+use diesel::{Insertable, Queryable, RunQueryDsl, ExpressionMethods, BoolExpressionMethods};
 use error::Error;
 use infrastructure::{schema::post_likes, db::DbConnection};
 use serde::{Serialize, Deserialize};
@@ -17,11 +17,20 @@ pub struct PostLike {
 }
 
 impl PostLike {
-    /// Method for creating post
+    /// Method for creating like
     pub fn create(data: CreateNewPostLikeData, mut connection: DbConnection) -> Result<PostLike, Error> {
         diesel::insert_into(post_likes::table)
             .values(data)
             .get_result::<PostLike>(&mut connection)
+            .map_err(Error::from)
+    }
+
+    /// Method for deleting like
+    pub fn delete(data: CreateNewPostLikeData, mut connection: DbConnection) -> Result<usize, Error> {
+        diesel::delete(post_likes::table)
+            .filter(post_likes::user_id.eq(data.user_id)
+                .and(post_likes::post_id.eq(data.post_id)))
+            .execute(&mut connection)
             .map_err(Error::from)
     }
 }

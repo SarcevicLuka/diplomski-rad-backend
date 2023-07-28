@@ -26,4 +26,17 @@ where
 
         Ok(post_like)
     }
+
+    async fn remove_like_post(
+        &self,
+        user_id: &str,
+        post_id: &str,
+    ) -> Result<(), Error> {
+        self
+            .repository
+            .remove_like_post(user_id, post_id)
+            .await?;
+
+        Ok(())
+    }
 }

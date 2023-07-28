@@ -24,10 +24,30 @@ impl PgRepositoryContract for PgRepository {
             post_id: post_id.to_string()
         };
 
-        let comment = PostLike::create(new_post_like_data, conn)?;
+        let like = PostLike::create(new_post_like_data, conn)?;
 
         Ok(
-            comment
+            like
         )
+    }
+
+    async fn remove_like_post(
+        &self,
+        user_id: &str,
+        post_id: &str
+    ) -> Result<(), Error> {
+        let conn = self.pg_pool.connection()?;
+
+        let new_post_like_data = CreateNewPostLikeData {
+            user_id: user_id.to_string(),
+            post_id: post_id.to_string()
+        };
+
+        let number = PostLike::delete(new_post_like_data, conn)?;
+        if number == 0 {
+            return Err(Error::Request("User or post id is invalid".to_string()));
+        }
+
+        Ok(())
     }
 }
