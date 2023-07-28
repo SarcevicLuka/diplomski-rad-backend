@@ -1,3 +1,4 @@
+pub mod comment_like;
 pub mod comment;
 pub mod post_like;
 pub mod post;

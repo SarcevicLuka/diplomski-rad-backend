@@ -4,9 +4,9 @@ use support::{
     store::models::user::DisplayUser, 
     helpers::http::part_from_path
 };
-use crate::application::post::like::contract::LikePostContract;
+use crate::application::post::comment::like::contract::LikeCommentContract;
 
-pub async fn handle_remove_like_post<T: LikePostContract>(
+pub async fn handle_like_comment<T: LikeCommentContract>(
     req: HttpRequest,
     service: web::Data<T>,
 ) -> Result<HttpResponse, Error> {
@@ -14,11 +14,14 @@ pub async fn handle_remove_like_post<T: LikePostContract>(
         return Err(Error::Unauthorized("not authorized".to_string()));
     };
 
-    let post_id = part_from_path::<String>(&req, "post_id")?;
+    let comment_id = part_from_path::<String>(&req, "comment_id")?;
 
-    service
-        .remove_like_post(&user.id, &post_id)
-        .await?;
+    let response = 
+        service
+            .like_comment(&user.id, &comment_id)
+            .await?;
 
-    Ok(HttpResponse::Ok().finish())
+    Ok(HttpResponse::Ok()
+        .json(response)
+    )
 }
