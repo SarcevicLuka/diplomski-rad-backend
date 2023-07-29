@@ -38,6 +38,7 @@ fn post(
     crate::application::post::like::setup::routes(postgres.clone(), cfg);
 
     crate::application::post::comment::create::setup::routes(postgres.clone(), cfg);
+    crate::application::post::comment::delete::setup::routes(postgres.clone(), cfg);
     crate::application::post::comment::edit::setup::routes(postgres.clone(), cfg);
     crate::application::post::comment::get::setup::routes(postgres.clone(), cfg);
     crate::application::post::comment::like::setup::routes(postgres, cfg);

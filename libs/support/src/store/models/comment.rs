@@ -31,6 +31,14 @@ impl Comment {
             .map_err(Error::from)
     }
 
+    /// Method for deleting comment
+    pub fn delete(comment_id: &str, mut connection: DbConnection) -> Result<usize, Error> {
+        diesel::delete(comments::table)
+            .filter(comments::id.eq(comment_id))
+            .execute(&mut connection)
+            .map_err(Error::from)
+    }
+
     /// Helper method to find Comment by id
     pub fn get_by_id(id: &str, connection: &mut DbConnection) -> Result<Comment, Error> {
         comments::table
