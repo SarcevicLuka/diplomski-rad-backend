@@ -1,5 +1,5 @@
 use std::sync::Arc;
-use actix_web::{web, web::post};
+use actix_web::{web, web::patch};
 use infrastructure::db::Postgres;
 use super::{
     domain::EditComment, 
@@ -20,7 +20,7 @@ pub fn routes(
     cfg.app_data(web::Data::new(service));
     cfg.service(
         web::resource("/comments/{comment_id}/edit")
-        .route(post().to(handle_edit_comment::<
+        .route(patch().to(handle_edit_comment::<
             EditComment<PgRepository>
         >))
         .wrap(crate::middleware::AuthLogin)
