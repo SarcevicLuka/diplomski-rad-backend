@@ -60,6 +60,7 @@ diesel::table! {
         #[max_length = 255]
         watch_id -> Varchar,
         review -> Text,
+        score -> Int4,
         created_at -> Timestamptz,
         updated_at -> Timestamptz,
     }

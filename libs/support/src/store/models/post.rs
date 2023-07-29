@@ -19,6 +19,7 @@ pub struct Post {
     pub user_id: String,
     pub watch_id: String,
     pub review: String,
+    pub score: i32,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
 }
@@ -61,7 +62,7 @@ impl Post {
     pub fn edit(id: &str, data: EditPostData, connection: &mut DbConnection) -> Result<Post, Error> {
         diesel::update(edit_post)
             .filter(posts::id.eq(id))
-            .set(posts::review.eq(data.review))
+            .set((posts::review.eq(data.review), posts::score.eq(data.score)))
             .get_result::<Post>(connection)
             .map_err(Error::from)
     }
@@ -73,6 +74,7 @@ impl From<Post> for CreateNewPostData {
             user_id: value.user_id,
             watch_id: value.watch_id,
             review: value.review,
+            score: value.score
         }
     }
 }
@@ -85,6 +87,7 @@ pub struct DisplayPost {
     pub user_id: String,
     pub watch_data: Watch,
     pub text: String,
+    pub score: i32,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
 }
@@ -95,6 +98,7 @@ pub struct DisplayPost {
 #[serde(rename_all = "camelCase")]
 pub struct EditPostData {
     pub review: String,
+    pub score: i32
 }
 
 /// Struct for creating Watch from post data
@@ -105,4 +109,5 @@ pub struct CreateNewPostData {
     pub user_id: String,
     pub watch_id: String,
     pub review: String,
+    pub score: i32
 }

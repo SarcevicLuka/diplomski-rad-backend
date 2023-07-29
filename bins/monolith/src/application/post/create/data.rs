@@ -9,14 +9,17 @@ use serde::{Serialize, Deserialize};
 pub struct UserPostData {
     pub watch_data: WatchData,
     //pub images: Vec<ImageData>,
-    pub review: Option<String>
+    pub review: Option<String>,
+    pub score: Option<i32>
 }
 
 impl Validation for UserPostData {
     fn rules(&self) -> Vec<Rule<Self>> {
         vec![
             rule_required!(review),
-            rule_length_max!(review, 200)
+            rule_length_max!(review, 200),
+            rule_required!(score),
+            rule_range!(score, Some(1), Some(5))
         ]
     }
     fn modifiers(&self) -> Vec<Modifier<Self>> {

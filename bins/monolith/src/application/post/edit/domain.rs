@@ -28,7 +28,8 @@ where
             .await?;
 
         let edit_post_data = EditPostData {
-            review: post_data.review.unwrap()
+            review: post_data.review.unwrap(),
+            score: post_data.score.unwrap()
         };
 
         let post = self
@@ -47,6 +48,7 @@ where
                 user_id: post.user_id, 
                 watch_data: watch, 
                 text: post.review, 
+                score: post.score,
                 created_at: post.created_at, 
                 updated_at: post.updated_at 
             }

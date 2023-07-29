@@ -38,6 +38,7 @@ impl PgRepositoryContract for PgRepository {
                 user_id: post.user_id, 
                 watch_data: watch, 
                 text: post.review, 
+                score: post.score,
                 created_at: post.created_at, 
                 updated_at: post.updated_at 
             }

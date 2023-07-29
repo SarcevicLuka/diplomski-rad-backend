@@ -27,7 +27,8 @@ where
         let post_data = CreateNewPostData {
             user_id: user_id.to_string(),
             watch_id,
-            review: post_data.review.unwrap()
+            review: post_data.review.unwrap(),
+            score: post_data.score.unwrap()
         };
 
         let post = self
