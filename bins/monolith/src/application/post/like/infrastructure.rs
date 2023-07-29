@@ -43,8 +43,8 @@ impl PgRepositoryContract for PgRepository {
             post_id: post_id.to_string()
         };
 
-        let number = PostLike::delete(new_post_like_data, conn)?;
-        if number == 0 {
+        let num_of_deleted_rows = PostLike::delete(new_post_like_data, conn)?;
+        if num_of_deleted_rows == 0 {
             return Err(Error::Request("User or post id is invalid".to_string()));
         }
 

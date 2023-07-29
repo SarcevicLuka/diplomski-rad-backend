@@ -32,6 +32,7 @@ fn post(
     cfg: &mut web::ServiceConfig
 ) {
     crate::application::post::create::setup::routes(postgres.clone(), cfg);
+    crate::application::post::delete::setup::routes(postgres.clone(), cfg);
     crate::application::post::edit::setup::routes(postgres.clone(), cfg);
     crate::application::post::get::setup::routes(postgres.clone(), cfg);
     crate::application::post::like::setup::routes(postgres.clone(), cfg);

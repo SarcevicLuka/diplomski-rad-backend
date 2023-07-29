@@ -32,6 +32,14 @@ impl Post {
             .map_err(Error::from)
     }
 
+    /// Method for deleting post
+    pub fn delete(post_id: &str, mut connection: DbConnection) -> Result<usize, Error> {
+        diesel::delete(posts::table)
+            .filter(posts::id.eq(post_id))
+            .execute(&mut connection)
+            .map_err(Error::from)
+    }
+
     /// Helper method to find post by id
     pub fn get_by_id(id: &str, connection: &mut DbConnection) -> Result<Post, Error> {
         posts::table
