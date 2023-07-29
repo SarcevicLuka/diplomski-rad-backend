@@ -19,7 +19,7 @@ pub fn routes(
     
     cfg.app_data(web::Data::new(service));
     cfg.service(
-        web::resource("/user/{user_id}")
+        web::resource("/user/info")
         .route(get().to(handle_get_user::<
             GetUser<PgRepository>
         >))

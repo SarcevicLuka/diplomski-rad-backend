@@ -23,7 +23,7 @@ pub fn routes(
     
     cfg.app_data(web::Data::new(service));
     cfg.service(
-        web::resource("/user/{user_id}/posts/{post_id}/comments/{comment_id}/like")
+        web::resource("/comments/{comment_id}/like")
         .route(post().to(handle_like_comment::<
             LikeComment<PgRepository>
         >))
@@ -31,7 +31,7 @@ pub fn routes(
     );
 
     cfg.service(
-        web::resource("/user/{user_id}/posts/{post_id}/comments/{comment_id}/remove-like")
+        web::resource("/comments/{comment_id}/remove-like")
         .route(post().to(handle_remove_like_comment::<
             LikeComment<PgRepository>
         >))

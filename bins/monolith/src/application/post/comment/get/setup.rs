@@ -20,7 +20,7 @@ pub fn routes(
     
     cfg.app_data(web::Data::new(service));
     cfg.service(
-        web::resource("/user/{user_id}/posts/{post_id}/comments")
+        web::resource("/posts/{post_id}/comments")
         .route(get().to(handle_get_post_comments::<
             GetComments<PgRepository>
         >))

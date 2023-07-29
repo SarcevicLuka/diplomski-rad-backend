@@ -19,7 +19,7 @@ pub fn routes(
     
     cfg.app_data(web::Data::new(service));
     cfg.service(
-        web::resource("/user/{user_id}/post/{post_id}/comments/{comment_id}/edit")
+        web::resource("/comments/{comment_id}/edit")
         .route(post().to(handle_edit_comment::<
             EditComment<PgRepository>
         >))

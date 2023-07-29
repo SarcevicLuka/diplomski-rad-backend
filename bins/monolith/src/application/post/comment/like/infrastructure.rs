@@ -17,8 +17,6 @@ impl PgRepositoryContract for PgRepository {
         comment_id: &str
     ) -> Result<CommentLike, Error> {
         let conn = self.pg_pool.connection()?;
-        debug!("{}", user_id.len());
-        debug!("{}", comment_id.len());
 
         let new_post_like_data = CreateNewCommentLikeData {
             user_id: user_id.to_string(),

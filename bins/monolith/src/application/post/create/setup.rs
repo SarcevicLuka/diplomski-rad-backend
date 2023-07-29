@@ -19,7 +19,7 @@ pub fn routes(
     
     cfg.app_data(web::Data::new(service));
     cfg.service(
-        web::resource("/create-post")
+        web::resource("/posts/create")
         .route(post().to(handle_create_post::<
             CreatePost<PgRepository>
         >))

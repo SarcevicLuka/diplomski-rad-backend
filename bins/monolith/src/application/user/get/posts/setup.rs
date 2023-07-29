@@ -4,7 +4,7 @@ use infrastructure::db::Postgres;
 use super::{
     domain::GetPost, 
     infrastructure::PgRepository, 
-    http::handle_get_post
+    http::handle_get_users_posts
 };
 
 #[allow(dead_code)]
@@ -20,8 +20,8 @@ pub fn routes(
     
     cfg.app_data(web::Data::new(service));
     cfg.service(
-        web::resource("/posts/{post_id}")
-        .route(get().to(handle_get_post::<
+        web::resource("/user/{user_id}/posts")
+        .route(get().to(handle_get_users_posts::<
             GetPost<PgRepository>
         >))
     );

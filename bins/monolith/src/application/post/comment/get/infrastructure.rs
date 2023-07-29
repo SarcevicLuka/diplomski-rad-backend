@@ -19,7 +19,6 @@ impl PgRepositoryContract for PgRepository {
         post_id: &str,
         attributes: UserCommentsAttributes
     ) -> Result<Response<Comment>, Error> {
-        debug!("{:#?}", attributes);
         let mut conn = self.pg_pool.connection()?;
 
         let query = 
