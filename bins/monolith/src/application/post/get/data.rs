@@ -6,7 +6,7 @@ use validr::*;
 /// Struct that holds users paginated pokedex
 #[derive(Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct PaginatedUsersPostsResponse {
+pub struct PaginatedPostsResponse {
     pub page: i64,
     pub per_page: i64,
     pub total: i64,
@@ -14,7 +14,7 @@ pub struct PaginatedUsersPostsResponse {
     pub data: Vec<PostWithLikes>,
 }
 
-impl From<Response<(Post, i64)>> for PaginatedUsersPostsResponse {
+impl From<Response<(Post, i64)>> for PaginatedPostsResponse {
     fn from(source: Response<(Post, i64)>) -> Self {
         Self {
             page: source.page,
@@ -48,14 +48,14 @@ impl From<(Post, i64)> for PostWithLikes {
 /// Struct that holds users pagination attributes
 #[derive(Clone, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct UserPostsAttributes {
+pub struct GetPostsAttributes {
     pub page: Option<i64>,
     pub per_page: Option<i64>,
     pub sort: Option<String>,
     pub name: Option<String>,
 }
 
-impl Validation for UserPostsAttributes {
+impl Validation for GetPostsAttributes {
     fn modifiers(&self) -> Vec<Modifier<Self>> {
         vec![
             modifier_uppercase!(sort),

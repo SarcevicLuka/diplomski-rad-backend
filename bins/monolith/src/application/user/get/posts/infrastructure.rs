@@ -31,7 +31,9 @@ impl PgRepositoryContract for PgRepository {
                 .select((posts::all_columns, sql::<diesel::sql_types::BigInt>("COUNT(post_likes.id) as num_likes")))
                 .into_boxed();
                 
-        query = query.filter(posts::user_id.eq(user_id));
+        query = query
+            .filter(posts::user_id.eq(user_id))
+            .order(posts::created_at.desc());
 
         query
             .page(attributes.page)

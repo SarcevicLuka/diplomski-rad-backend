@@ -4,7 +4,10 @@ use infrastructure::db::Postgres;
 use super::{
     domain::GetPost, 
     infrastructure::PgRepository, 
-    http::handle_get_post
+    http::{
+        http_get_by_id::handle_get_post,
+        http_get_feed_newest_posts::handle_get_newest_posts
+    }
 };
 
 #[allow(dead_code)]
@@ -22,6 +25,12 @@ pub fn routes(
     cfg.service(
         web::resource("/posts/{post_id}")
         .route(get().to(handle_get_post::<
+            GetPost<PgRepository>
+        >))
+    );
+    cfg.service(
+        web::resource("/feed/posts")
+        .route(get().to(handle_get_newest_posts::<
             GetPost<PgRepository>
         >))
     );
