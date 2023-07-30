@@ -53,4 +53,15 @@ where
             .await
             .map(PaginatedPostsResponse::from)
     }
+
+    async fn get_feed_best_reviewed_posts_paginated(
+        &self,
+        attibutes: GetPostsAttributes
+    ) -> Result<PaginatedPostsResponse, Error> {
+        self
+            .repository
+            .get_feed_best_reviewed_posts_paginated(attibutes)
+            .await
+            .map(PaginatedPostsResponse::from)
+    }
 }

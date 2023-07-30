@@ -97,4 +97,32 @@ impl PgRepositoryContract for PgRepository {
             .paginate(&mut conn)
             .map_err(Error::from)
     }
+
+    /// Fetches best reviewed posts in the last 7 days for the feed
+    async fn get_feed_best_reviewed_posts_paginated(
+        &self,
+        attributes: GetPostsAttributes
+    ) -> Result<Response<(Post, i64)>, Error> {
+        let mut conn = self.pg_pool.connection()?;
+
+        let now = Utc::now().naive_utc();
+        let seven_days_ago = now - Duration::days(7);
+
+        let mut query = 
+            posts::table
+                .left_join(post_likes_count)
+                .group_by(posts::id)
+                .select((posts::all_columns, sql::<diesel::sql_types::BigInt>("COUNT(post_likes.id) as num_likes")))
+                .into_boxed();
+                
+        query = query
+            .filter(posts::created_at.gt(seven_days_ago))
+            .order(posts::score.desc());
+
+        query
+            .page(attributes.page)
+            .per_page(attributes.per_page)
+            .paginate(&mut conn)
+            .map_err(Error::from)
+    }
 }

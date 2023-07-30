@@ -6,7 +6,8 @@ use super::{
     infrastructure::PgRepository, 
     http::{
         http_get_by_id::handle_get_post,
-        http_get_feed_newest_posts::handle_get_newest_posts
+        http_get_feed_newest_posts::handle_get_newest_posts, 
+        http_get_feed_best_reviewed_posts::handle_get_best_reviewed_posts
     }
 };
 
@@ -29,8 +30,14 @@ pub fn routes(
         >))
     );
     cfg.service(
-        web::resource("/feed/posts")
+        web::resource("/feed/newest")
         .route(get().to(handle_get_newest_posts::<
+            GetPost<PgRepository>
+        >))
+    );
+    cfg.service(
+        web::resource("/feed/best-reviewed")
+        .route(get().to(handle_get_best_reviewed_posts::<
             GetPost<PgRepository>
         >))
     );
