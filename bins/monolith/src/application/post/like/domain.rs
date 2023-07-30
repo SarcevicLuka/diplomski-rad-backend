@@ -32,10 +32,14 @@ where
         user_id: &str,
         post_id: &str,
     ) -> Result<(), Error> {
-        self
+        let num_of_deleted_rows = self
             .repository
             .remove_like_post(user_id, post_id)
             .await?;
+
+        if num_of_deleted_rows == 0 {
+            return Err(Error::Request("User or post id is invalid".to_string()));
+        }
 
         Ok(())
     }

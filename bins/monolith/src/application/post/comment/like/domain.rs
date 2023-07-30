@@ -32,10 +32,14 @@ where
         user_id: &str,
         comment_id: &str,
     ) -> Result<(), Error> {
-        self
+        let num_of_deleted_rows = self
             .repository
             .remove_like_comment(user_id, comment_id)
             .await?;
+
+        if num_of_deleted_rows == 0 {
+            return Err(Error::Request("User or comment id is invalid".to_string()));
+        }
 
         Ok(())
     }

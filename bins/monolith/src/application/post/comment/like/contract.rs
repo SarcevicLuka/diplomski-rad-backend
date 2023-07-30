@@ -13,5 +13,5 @@ pub trait LikeCommentContract {
 #[async_trait]
 pub trait PgRepositoryContract {
     async fn like_comment(&self, user_id: &str, comment_id: &str) -> Result<CommentLike, Error>;
-    async fn remove_like_comment(&self, user_id: &str, comment_id: &str) -> Result<(), Error>;
+    async fn remove_like_comment(&self, user_id: &str, comment_id: &str) -> Result<usize, Error>;
 }

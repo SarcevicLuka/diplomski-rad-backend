@@ -35,7 +35,7 @@ impl PgRepositoryContract for PgRepository {
         &self,
         user_id: &str,
         post_id: &str
-    ) -> Result<(), Error> {
+    ) -> Result<usize, Error> {
         let conn = self.pg_pool.connection()?;
 
         let new_post_like_data = CreateNewPostLikeData {
@@ -43,11 +43,6 @@ impl PgRepositoryContract for PgRepository {
             post_id: post_id.to_string()
         };
 
-        let num_of_deleted_rows = PostLike::delete(new_post_like_data, conn)?;
-        if num_of_deleted_rows == 0 {
-            return Err(Error::Request("User or post id is invalid".to_string()));
-        }
-
-        Ok(())
+        PostLike::delete(new_post_like_data, conn)
     }
 }

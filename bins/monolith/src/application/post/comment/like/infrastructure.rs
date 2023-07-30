@@ -34,7 +34,7 @@ impl PgRepositoryContract for PgRepository {
         &self,
         user_id: &str,
         comment_id: &str
-    ) -> Result<(), Error> {
+    ) -> Result<usize, Error> {
         let conn = self.pg_pool.connection()?;
 
         let new_comment_like_data = CreateNewCommentLikeData {
@@ -42,11 +42,6 @@ impl PgRepositoryContract for PgRepository {
             comment_id: comment_id.to_string()
         };
 
-        let number = CommentLike::delete(new_comment_like_data, conn)?;
-        if number == 0 {
-            return Err(Error::Request("User or comment id is invalid".to_string()));
-        }
-
-        Ok(())
+        CommentLike::delete(new_comment_like_data, conn)
     }
 }
