@@ -1,6 +1,7 @@
+use chrono::NaiveDateTime;
 use length_aware_paginator::Response;
 use serde::{Deserialize, Serialize};
-use support::store::models::post::Post;
+use support::store::models::{post::Post, watch::Watch};
 use validr::*;
 
 /// Struct that holds users paginated pokedex
@@ -73,4 +74,18 @@ impl Validation for GetPostsAttributes {
             rule_in!(sort, vec!["ASC".to_string(), "DESC".to_string()]),
         ]
     }
+}
+
+/// Struct for holding post data to be displayed
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct DisplayPostWithAvgScore {
+    pub id: String,
+    pub user_id: String,
+    pub watch_data: Watch,
+    pub text: String,
+    pub score: i32,
+    pub avg_comment_score: f64,
+    pub created_at: NaiveDateTime,
+    pub updated_at: NaiveDateTime,
 }

@@ -1,15 +1,19 @@
 use std::sync::Arc;
 use async_trait::async_trait;
-use diesel::{QueryDsl, ExpressionMethods};
-use diesel::dsl::sql;
+use diesel::{QueryDsl, RunQueryDsl, ExpressionMethods};
+use diesel::dsl::{sql, sum, count};
 use chrono::{Duration, Utc};
 use error::Error;
-use infrastructure::{db::Postgres, schema::posts};
+use infrastructure::{
+    db::Postgres, 
+    schema::{posts, comments}
+};
 use length_aware_paginator::{Response, Paginate};
 use support::store::models::{
-    post::{Post, DisplayPost}, 
-    watch::Watch
+    post::Post, 
+    watch::Watch,
 };
+use super::data::DisplayPostWithAvgScore;
 use super::{
     contract::PgRepositoryContract,
     data::GetPostsAttributes
@@ -26,19 +30,28 @@ impl PgRepositoryContract for PgRepository {
     async fn get_post(
         &self,
         post_id: &str
-    ) -> Result<DisplayPost, Error> {
+    ) -> Result<DisplayPostWithAvgScore, Error> {
         let mut conn = self.pg_pool.connection()?;
 
         let post = Post::get_by_id(post_id, &mut conn)?;
         let watch = Watch::get_by_id(&post.watch_id, &mut conn)?;
 
+        let (sum_of_scores, num_of_comments)= comments::table
+            .select((sum(comments::score), count(comments::id)))
+            .filter(comments::post_id.eq(post_id))
+            .get_result::<(Option<i64>, i64)>(&mut conn)?;
+
+        let avg_non_rounded = sum_of_scores.unwrap() as f64 /num_of_comments as f64;
+        let avg_rounded = (avg_non_rounded * 100.0).ceil() / 100.0;
+        
         Ok(
-            DisplayPost {
+            DisplayPostWithAvgScore {
                 id: post.id,
                 user_id: post.user_id, 
                 watch_data: watch, 
                 text: post.review, 
                 score: post.score,
+                avg_comment_score: avg_rounded,
                 created_at: post.created_at, 
                 updated_at: post.updated_at 
             }

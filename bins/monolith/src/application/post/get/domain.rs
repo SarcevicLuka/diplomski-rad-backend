@@ -2,9 +2,8 @@ use async_trait::async_trait;
 use error::Error;
 use super::{
     contract::{PgRepositoryContract, GetPostsContract}, 
-    data::{GetPostsAttributes, PaginatedPostsResponse}
+    data::{GetPostsAttributes, PaginatedPostsResponse, DisplayPostWithAvgScore}
 };
-use support::store::models::post::DisplayPost;
 
 pub struct GetPost<
     A: PgRepositoryContract,
@@ -20,7 +19,7 @@ where
     async fn get_post(
         &self,
         post_id: &str
-    ) -> Result<DisplayPost, Error> {
+    ) -> Result<DisplayPostWithAvgScore, Error> {
         let post = self
             .repository
             .get_post(post_id)
