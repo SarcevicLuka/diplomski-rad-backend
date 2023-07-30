@@ -1,5 +1,5 @@
 use chrono::NaiveDateTime;
-use diesel::{Insertable, Queryable, RunQueryDsl, ExpressionMethods, BoolExpressionMethods};
+use diesel::{Insertable, Queryable, RunQueryDsl, QueryDsl, ExpressionMethods, BoolExpressionMethods};
 use error::Error;
 use infrastructure::{schema::friendships, db::DbConnection};
 use serde::{Serialize, Deserialize};
@@ -31,6 +31,26 @@ impl UserFollow {
             .filter(friendships::user_requesting.eq(user_id)
                 .and(friendships::user_responding.eq(unfollowed_user_id)))
             .execute(&mut connection)
+            .map_err(Error::from)
+    }
+
+    /// Method for getting ids of users user is following
+    pub fn get_followed_user_ids(user_id: &str, mut connection: DbConnection) -> Result<Vec<String>, Error> {
+        friendships::table
+            .select(friendships::user_responding)
+            .filter(friendships::user_requesting.eq(user_id))
+            .order(friendships::created_at.desc())
+            .get_results::<String>(&mut connection)
+            .map_err(Error::from)
+    }
+
+     /// Method for getting ids of users user is following
+     pub fn get_following_user_ids(user_id: &str, mut connection: DbConnection) -> Result<Vec<String>, Error> {
+        friendships::table
+            .select(friendships::user_requesting)
+            .filter(friendships::user_responding.eq(user_id))
+            .order(friendships::created_at.desc())
+            .get_results::<String>(&mut connection)
             .map_err(Error::from)
     }
 }
