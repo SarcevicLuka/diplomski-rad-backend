@@ -72,3 +72,19 @@ pub struct CreateNewUserFollowData {
     pub user_requesting: String,
     pub user_responding: String,
 }
+
+#[allow(dead_code)]
+/// Method that will return created user with some given parameters
+/// used as a helper when testing
+pub fn testable(
+    user_request_id: &str,
+    user_response_id: &str,
+) -> UserFollow {
+    UserFollow { 
+        id: uuid::Uuid::new_v4().to_string(), 
+        user_requesting: user_request_id.to_string(), 
+        user_responding: user_response_id.to_string(), 
+        created_at: NaiveDateTime::parse_from_str("2023-04-19 08:00:00", "%Y-%m-%d %H:%M:%S")
+        .unwrap() 
+    }
+}

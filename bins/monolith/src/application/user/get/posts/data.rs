@@ -31,7 +31,7 @@ impl From<Response<(Post, i64)>> for PaginatedUsersPostsResponse {
 }
 
 /// Struct that holds posts for the frontend
-#[derive(Clone, Serialize)]
+#[derive(Clone, Serialize, PartialEq, Eq, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct PostWithLikes {
     pub post: Post,

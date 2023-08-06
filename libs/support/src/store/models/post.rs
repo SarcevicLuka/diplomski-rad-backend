@@ -10,7 +10,7 @@ use serde::{Serialize, Deserialize};
 use super::watch::Watch;
 
 /// Struct for holding post data fron database
-#[derive(Insertable, Queryable, Serialize, Deserialize, PartialEq, Debug, Clone)]
+#[derive(Insertable, Queryable, Serialize, Deserialize, PartialEq, Eq, Debug, Clone)]
 #[diesel(table_name = posts)]
 #[diesel(treat_none_as_null = true)]
 #[serde(rename_all = "camelCase")]
@@ -110,4 +110,27 @@ pub struct CreateNewPostData {
     pub watch_id: String,
     pub review: String,
     pub score: i32
+}
+
+#[allow(dead_code)]
+/// Method that will return created user with some given parameters
+/// used as a helper when testing
+pub fn testable(
+    id: Option<&str>,
+    user_id: Option<&str>,
+    watch_id: Option<&str>,
+    review: Option<&str>,
+    score: Option<i32>,
+) -> Post {
+    Post {
+        id: id.unwrap_or(&uuid::Uuid::new_v4().to_string()).to_string(),
+        user_id: user_id.unwrap_or("test_user_id").to_string(),
+        watch_id: watch_id.unwrap_or("watch_id").to_string(),
+        review: review.unwrap_or("review").to_string(),
+        score: score.unwrap_or(3),
+        created_at: NaiveDateTime::parse_from_str("2023-04-19 08:00:00", "%Y-%m-%d %H:%M:%S")
+            .unwrap(),
+        updated_at: NaiveDateTime::parse_from_str("2023-04-19 08:00:00", "%Y-%m-%d %H:%M:%S")
+            .unwrap(),
+    }
 }
