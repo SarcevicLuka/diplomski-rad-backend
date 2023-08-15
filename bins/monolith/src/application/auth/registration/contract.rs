@@ -1,10 +1,11 @@
 use error::Error;
 use async_trait::async_trait;
 use support::store::models::user::{
-    DisplayUser, 
     CreateNewUserData, 
     User
 };
+use crate::application::auth::authentication::data::AuthDataResponse;
+
 use super::data::RegistrationUserData;
 
 #[cfg_attr(test, mockall::automock)]
@@ -14,7 +15,7 @@ pub trait RegistrationContract {
     async fn register(
         &self,
         data: RegistrationUserData
-    ) -> Result<(DisplayUser, String), Error>;
+    ) -> Result<AuthDataResponse, Error>;
 }
 
 #[cfg_attr(test, mockall::automock)]

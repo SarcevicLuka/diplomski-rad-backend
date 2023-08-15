@@ -1,4 +1,5 @@
 use serde::{Serialize, Deserialize};
+use support::store::models::user::DisplayUser;
 use validr::*;
 
 /// Struct for holding login data
@@ -23,4 +24,12 @@ impl Validation for LoginUserData {
             modifier_lowercase!(email),
         ]
     }
+}
+
+/// Struct for holding user data and token
+#[derive(Serialize, Deserialize, PartialEq, Eq, Debug, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct AuthDataResponse {
+    pub user: DisplayUser,
+    pub token: String
 }

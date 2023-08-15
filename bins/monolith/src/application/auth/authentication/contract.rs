@@ -1,7 +1,7 @@
 use async_trait::async_trait;
 use error::Error;
-use support::store::models::user::{User, DisplayUser};
-use super::data::LoginUserData;
+use support::store::models::user::User;
+use super::data::{LoginUserData, AuthDataResponse};
 
 #[cfg_attr(test, mockall::automock)]
 #[async_trait]
@@ -10,7 +10,7 @@ pub trait LoginContract {
     async fn login(
         &self,
         data: LoginUserData
-    ) -> Result<(DisplayUser, String), Error>;
+    ) -> Result<AuthDataResponse, Error>;
 }
 
 #[cfg_attr(test, mockall::automock)]

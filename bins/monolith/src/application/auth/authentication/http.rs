@@ -12,10 +12,9 @@ pub async fn handle_login<T: LoginContract>(
     data: web::Json<LoginUserData>
 ) -> Result<HttpResponse, Error> {
     let data = data.into_inner().validate()?;
-    let (user, token) = service.login(data).await?;
+    let auth_response = service.login(data).await?;
     
     Ok(HttpResponse::Ok()
-        .insert_header(("Authorization", token))
-        .json(user)
+        .json(auth_response)
     )
 }

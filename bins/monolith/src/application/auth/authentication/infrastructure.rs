@@ -14,13 +14,13 @@ impl PgRepositoryContract for PgRepository {
     async fn get_user_by_email(&self, email: &str) -> Result<User, Error> {
         let mut connection = match self.pg_pool.connection() {
             Ok(c) => c,
-            Err(_) => return Err(Error::NotFoundWithCause("no connection".to_string())),
+            Err(_) => return Err(Error::NotFoundWithCause("No connection".to_string())),
         };
         let exists = User::get_by_email(email, &mut connection);
 
         match exists {
             Ok(user) => Ok(user),
-            Err(_) => return Err(Error::Forbidden("user with given email does not exist".to_string())),
+            Err(_) => return Err(Error::Request("User with given email does not exist".to_string())),
         }
     }
 }

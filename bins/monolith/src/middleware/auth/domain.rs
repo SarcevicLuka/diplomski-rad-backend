@@ -23,7 +23,7 @@ where
         let user = match self.repository.get_user_by_email(&user_email) {
             Ok(user) => user,
             Err(_) => return Err(
-                Error::Forbidden("user from jwt not found in database".to_string())
+                Error::Forbidden("User from jwt not found in database".to_string())
             ),
         };
         let authenticated_user = DisplayUser::from(user);

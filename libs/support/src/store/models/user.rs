@@ -97,7 +97,7 @@ impl From<User> for CreateNewUserData {
     }
 }
 
-#[derive(Queryable, Serialize, Deserialize, PartialEq, Debug, Clone)]
+#[derive(Queryable, Serialize, Deserialize, PartialEq, Eq, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct DisplayUser {
     pub id: String,

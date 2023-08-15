@@ -10,7 +10,7 @@ pub async fn handle_create_post<T: CreatePostContract>(
     data: web::Json<UserPostData>
 ) -> Result<HttpResponse, Error> {
     let Some(user) = req.extensions_mut().remove::<DisplayUser>() else {
-        return Err(Error::Unauthorized("not authorized".to_string()));
+        return Err(Error::Unauthorized("Not authorized".to_string()));
     };
 
     let data = data.into_inner().validate()?;

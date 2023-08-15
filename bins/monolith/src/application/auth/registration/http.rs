@@ -9,10 +9,9 @@ pub async fn handle_register<T: RegistrationContract>(
     data: web::Json<RegistrationUserData>
 ) -> Result<HttpResponse, Error> {
     let data = data.into_inner().validate()?;
-    let (authenticated_user, token) = service.register(data).await?;
+    let auth_data = service.register(data).await?;
     
     Ok(HttpResponse::Created()
-        .insert_header(("Authorization", token))
-        .json(authenticated_user)
+        .json(auth_data)
     )
 }

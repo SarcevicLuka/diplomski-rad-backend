@@ -36,7 +36,7 @@ fn setup_cors() -> actix_cors::Cors {
             http::header::CONTENT_TYPE,
             http::header::AUTHORIZATION,
         ])
-        .allowed_methods(vec!["POST", "GET"])
+        .allowed_methods(vec!["POST", "GET", "PUT"])
         .expose_headers(vec!["Authorization"])
         .max_age(3600)
 }

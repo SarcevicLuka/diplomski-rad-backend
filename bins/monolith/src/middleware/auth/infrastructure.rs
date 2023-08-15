@@ -18,11 +18,11 @@ impl<'a> RequestContract for Request<'a> {
             Some(head) => match head.to_str().ok() {
                 Some(val) => val.to_string(),
                 None => return Err(
-                    Error::Request("authorization header empty".to_string())
+                    Error::Request("Authorization header empty".to_string())
                 ),
             },
             None => return Err(
-                Error::Forbidden("no authorization header".to_string())
+                Error::Forbidden("No authorization header".to_string())
             ),
         };
         let mut split = header.split_whitespace();
@@ -33,10 +33,10 @@ impl<'a> RequestContract for Request<'a> {
                 let claims = jwt::verify(token.to_string(), &secret)?;
                 Ok(claims.email)
             } else {
-                Err(Error::Unauthorized("no jwt token".to_string()))
+                Err(Error::Unauthorized("No jwt token".to_string()))
             }
         } else {
-            Err(Error::Forbidden("no bearer scheme with jwt token".to_string()))
+            Err(Error::Forbidden("No bearer scheme with jwt token".to_string()))
         }
     }
 }
@@ -119,7 +119,7 @@ mod test {
             Ok(_email) => panic!("Should have been an error"),
             Err(e) => match e {
                 Error::Forbidden(cause) => {
-                    assert_eq!(cause, "no authorization header".to_string())
+                    assert_eq!(cause, "No authorization header".to_string())
                 },
                 _ => panic!("Wrong error"),
             }
@@ -143,7 +143,7 @@ mod test {
             Ok(_email) => panic!("Should have been an error"),
             Err(e) => match e {
                 Error::Forbidden(cause) => {
-                    assert_eq!(cause, "no bearer scheme with jwt token".to_string())
+                    assert_eq!(cause, "No bearer scheme with jwt token".to_string())
                 },
                 _ => panic!("Wrong error"),
             }
@@ -167,7 +167,7 @@ mod test {
             Ok(_email) => panic!("Should have been an error"),
             Err(e) => match e {
                 Error::Forbidden(cause) => {
-                    assert_eq!(cause, "no bearer scheme with jwt token".to_string())
+                    assert_eq!(cause, "No bearer scheme with jwt token".to_string())
                 },
                 _ => panic!("Wrong error"),
             }
@@ -189,7 +189,7 @@ mod test {
             Ok(_email) => panic!("Should have been an error"),
             Err(e) => match e {
                 Error::Unauthorized(cause) => {
-                    assert_eq!(cause, "no jwt token".to_string())
+                    assert_eq!(cause, "No jwt token".to_string())
                 },
                 _ => panic!("Wrong error"),
             }

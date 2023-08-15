@@ -4,7 +4,7 @@ use support::store::models::user::{DisplayUser, User};
 use crate::application::auth::authentication::contract::PgRepositoryContract;
 use super::{
     contract::LoginContract, 
-    data::LoginUserData
+    data::{LoginUserData, AuthDataResponse}
 };
 
 pub struct Login <
@@ -25,7 +25,7 @@ where
     async fn login(
         &self,
         data: LoginUserData
-    ) -> Result<(DisplayUser, String), Error> {
+    ) -> Result<AuthDataResponse, Error> {
         let email = match &data.email {
             Some(email) => email.to_string().to_lowercase(),
             None => return Err(Error::Request("Invalid credentials".to_string())),
@@ -40,12 +40,15 @@ where
             .await?;
 
         if !User::verify_password(&password, &user.password) {
-            return Err(Error::Forbidden("Invalid credentials".to_string()));
+            return Err(Error::Request("Invalid credentials".to_string()));
         };
         
         let authenticated_user = DisplayUser::from(user);
         let token = User::generate_jwt_token(&authenticated_user)?;
 
-        Ok((authenticated_user, token))
+        Ok(AuthDataResponse { 
+            user: authenticated_user, 
+            token: token }
+        )
     }
 }

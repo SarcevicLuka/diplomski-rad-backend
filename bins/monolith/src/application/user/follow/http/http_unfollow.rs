@@ -11,7 +11,7 @@ pub async fn handle_unfollow_user<T: FollowUserContract>(
     service: web::Data<T>,
 ) -> Result<HttpResponse, Error> {
     let Some(request_user) = req.extensions_mut().remove::<DisplayUser>() else {
-        return Err(Error::Unauthorized("not authorized".to_string()));
+        return Err(Error::Unauthorized("Not authorized".to_string()));
     };
 
     let unfollowed_user_id = part_from_path::<String>(&req, "user_id")?;

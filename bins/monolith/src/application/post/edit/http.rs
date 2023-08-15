@@ -16,7 +16,7 @@ pub async fn handle_edit_post<T: EditPostContract>(
     data: web::Json<UserEditPostData>
 ) -> Result<HttpResponse, Error> {
     let Some(_user) = req.extensions_mut().remove::<DisplayUser>() else {
-        return Err(Error::Unauthorized("not authorized".to_string()));
+        return Err(Error::Unauthorized("Not authorized".to_string()));
     };
 
     let data = data.into_inner().validate()?;

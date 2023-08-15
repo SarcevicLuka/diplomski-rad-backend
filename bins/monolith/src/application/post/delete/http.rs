@@ -9,7 +9,7 @@ pub async fn handle_delete_post<T: DeletePostContract>(
     service: web::Data<T>,
 ) -> Result<HttpResponse, Error> {
     let Some(_user) = req.extensions_mut().remove::<DisplayUser>() else {
-        return Err(Error::Unauthorized("not authorized".to_string()));
+        return Err(Error::Unauthorized("Not authorized".to_string()));
     };
 
     let post_id = part_from_path::<String>(&req, "post_id")?;
