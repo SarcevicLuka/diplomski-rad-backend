@@ -52,3 +52,20 @@ pub struct CreateNewPostLikeData {
     pub user_id: String,
     pub post_id: String,
 }
+
+#[allow(dead_code)]
+/// Method that will return created user with some given parameters
+/// used as a helper when testing
+pub fn testable(
+    id: Option<&str>,
+    user_id: Option<&str>,
+    post_id: Option<&str>,
+) -> PostLike {
+    PostLike { 
+        id: id.unwrap_or(&uuid::Uuid::new_v4().to_string()).to_string(),
+        user_id: user_id.unwrap_or("test_user_id").to_string(), 
+        post_id: post_id.unwrap_or("test_post_id").to_string(), 
+        created_at: NaiveDateTime::parse_from_str("2023-04-19 08:00:00", "%Y-%m-%d %H:%M:%S")
+        .unwrap() 
+    }
+}
