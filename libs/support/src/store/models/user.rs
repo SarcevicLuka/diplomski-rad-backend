@@ -5,6 +5,7 @@ use infrastructure::{
     schema::users
 };
 use error::Error;
+use std::str;
 use serde::{Serialize, Deserialize};
 
 #[derive(Insertable, Queryable, Serialize, Deserialize, PartialEq, Debug, Clone)]
@@ -17,7 +18,7 @@ pub struct User {
     pub first_name: String,
     pub last_name: String,
     pub password: String,
-    pub avatar: String,
+    pub avatar: Vec<u8>,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
 }
@@ -82,7 +83,7 @@ pub struct CreateNewUserData {
     pub first_name: String,
     pub last_name: String,
     pub password: String,
-    pub avatar: String,
+    pub avatar: Vec<u8>,
 }
 
 impl From<User> for CreateNewUserData {
@@ -116,7 +117,7 @@ impl From<User> for DisplayUser {
             email: value.email, 
             first_name: value.first_name, 
             last_name: value.last_name, 
-            avatar: value.avatar,
+            avatar: str::from_utf8(&value.avatar).unwrap().to_string(),
             created_at: value.created_at, 
             updated_at: value.updated_at, 
         }
@@ -139,7 +140,7 @@ pub fn testable(
         first_name: first_name.unwrap_or("John").to_string(),
         last_name: last_name.unwrap_or("Doe").to_string(),
         password: User::hash_password(password.unwrap_or("test")).unwrap(),
-        avatar: "test/image".to_string(),
+        avatar: "test/image".as_bytes().to_vec(),
         created_at: NaiveDateTime::parse_from_str("2023-04-19 08:00:00", "%Y-%m-%d %H:%M:%S")
             .unwrap(),
         updated_at: NaiveDateTime::parse_from_str("2023-04-19 08:00:00", "%Y-%m-%d %H:%M:%S")

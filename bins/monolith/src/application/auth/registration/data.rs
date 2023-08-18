@@ -79,7 +79,7 @@ impl RegistrationUserData {
             first_name,
             last_name,
             password,
-            avatar
+            avatar: avatar.into()
         }
     }
 }

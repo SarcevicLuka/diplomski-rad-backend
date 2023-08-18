@@ -78,7 +78,7 @@ diesel::table! {
         last_name -> Varchar,
         #[max_length = 255]
         password -> Varchar,
-        avatar -> Text,
+        avatar -> Bytea,
         created_at -> Timestamptz,
         updated_at -> Timestamptz,
     }

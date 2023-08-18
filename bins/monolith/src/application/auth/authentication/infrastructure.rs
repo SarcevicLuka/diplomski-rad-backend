@@ -20,7 +20,7 @@ impl PgRepositoryContract for PgRepository {
 
         match exists {
             Ok(user) => Ok(user),
-            Err(_) => return Err(Error::Request("User with given email does not exist".to_string())),
+            Err(_) => return Err(Error::Forbidden("User with given email does not exist".to_string())),
         }
     }
 }
