@@ -1,7 +1,13 @@
 use async_trait::async_trait;
 use error::Error;
-use super::{contract::{CreatePostContract, PgRepositoryContract}, data::UserPostData};
-use support::store::models::post::{Post, CreateNewPostData};
+use super::{
+    contract::{CreatePostContract, PgRepositoryContract}, 
+    data::UserPostData
+};
+use support::store::models::{
+    post::{Post, CreateNewPostData},
+    watch_images::CreateNewWatchImageData
+};
 
 pub struct CreatePost<
     A: PgRepositoryContract,
@@ -23,6 +29,22 @@ where
             .repository
             .create_watch(post_data.watch_data.insertable())
             .await?;
+
+        for data in post_data.images.into_iter() {
+            match data.data {
+                Some(image) => {
+                    let watch_image_data = CreateNewWatchImageData {
+                        watch_id: watch_id.clone(),
+                        data: image.as_bytes().into()
+                    };
+                    self
+                        .repository
+                        .create_watch_image(watch_image_data)
+                        .await?;
+                }
+                None => return Err(Error::Request("No images".to_string()))
+            }
+        }
 
         let post_data = CreateNewPostData {
             user_id: user_id.to_string(),

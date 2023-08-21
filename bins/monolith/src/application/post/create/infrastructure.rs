@@ -2,7 +2,7 @@ use std::sync::Arc;
 use async_trait::async_trait;
 use error::Error;
 use infrastructure::db::Postgres;
-use support::store::models::{post::{CreateNewPostData, Post}, watch::{CreateNewWatchData, Watch}};
+use support::store::models::{post::{CreateNewPostData, Post}, watch::{CreateNewWatchData, Watch}, watch_images::{CreateNewWatchImageData, WatchImage}};
 use super::contract::PgRepositoryContract;
 
 
@@ -36,6 +36,19 @@ impl PgRepositoryContract for PgRepository {
 
         Ok(
             watch.id
+        )
+    }
+
+    async fn create_watch_image(
+        &self,
+        watch_image_data: CreateNewWatchImageData
+    ) -> Result<String, Error> {
+        let conn = self.pg_pool.connection()?;
+
+        let watch_image = WatchImage::create(watch_image_data, conn)?;
+
+        Ok(
+            watch_image.id
         )
     }
 }

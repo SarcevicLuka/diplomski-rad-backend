@@ -14,8 +14,8 @@ pub struct PaginatedUsersPostsResponse {
     pub data: Vec<PostWithLikes>,
 }
 
-impl From<Response<(Post, i64)>> for PaginatedUsersPostsResponse {
-    fn from(source: Response<(Post, i64)>) -> Self {
+impl From<Response<(Post, i64, i64)>> for PaginatedUsersPostsResponse {
+    fn from(source: Response<(Post, i64, i64)>) -> Self {
         Self {
             page: source.page,
             per_page: source.per_page,
@@ -35,13 +35,23 @@ impl From<Response<(Post, i64)>> for PaginatedUsersPostsResponse {
 #[serde(rename_all = "camelCase")]
 pub struct PostWithLikes {
     pub post: Post,
-    pub num_likes: i64
+    pub num_likes: i64,
+    pub num_comments: i64
 }
 
-impl From<(Post, i64)> for PostWithLikes {
-    fn from(source: (Post, i64)) -> Self {
-        let (post, num_likes) = source;
-        PostWithLikes { post, num_likes }
+impl From<(Post, i64, i64)> for PostWithLikes {
+    fn from(source: (Post, i64, i64)) -> Self {
+        let (
+            post, 
+            num_likes, 
+            num_comments
+        ) = source;
+
+        PostWithLikes { 
+            post, 
+            num_likes, 
+            num_comments
+        }
     }
 }
 

@@ -19,21 +19,29 @@ impl PgRepositoryContract for PgRepository {
         &self,
         user_id: &str,
         attributes: UserPostsAttributes
-    ) -> Result<Response<(Post, i64)>, Error> {
-        use infrastructure::schema::post_likes::dsl::post_likes as post_likes_count;
+    ) -> Result<Response<(Post, i64, i64)>, Error> {
+        use infrastructure::schema::{
+            post_likes::dsl::post_likes as post_likes_count,
+            comments::dsl::comments as comments_count
+        };
 
         let mut conn = self.pg_pool.connection()?;
 
         let mut query = 
             posts::table
                 .left_join(post_likes_count)
+                .left_join(comments_count)
                 .group_by(posts::id)
-                .select((posts::all_columns, sql::<diesel::sql_types::BigInt>("COUNT(post_likes.id) as num_likes")))
+                .select((
+                    posts::all_columns, 
+                    sql::<diesel::sql_types::BigInt>("COUNT(post_likes.id) as num_likes"),
+                    sql::<diesel::sql_types::BigInt>("COUNT(comments.id) as num_comments"),
+                ))
                 .into_boxed();
-                
+
         query = query
             .filter(posts::user_id.eq(user_id))
-            .order(posts::created_at.desc());
+            .order_by(posts::created_at.desc());
 
         query
             .page(attributes.page)

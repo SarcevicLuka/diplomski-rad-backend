@@ -2,7 +2,7 @@ CREATE TABLE watch_images
 (
     id              VARCHAR(36) DEFAULT uuid_generate_v4() NOT NULL,
     watch_id        VARCHAR(36) NOT NULL,
-    "data"          TEXT DEFAULT NULL,
+    "data"          BYTEA NOT NULL,
     CONSTRAINT pk_watch_images_id PRIMARY KEY (id),
     CONSTRAINT one_watch_has_many_images
         FOREIGN KEY (watch_id)
@@ -12,5 +12,3 @@ CREATE TABLE watch_images
 );
 
 SELECT diesel_manage_updated_at('watch_images');
-
-CREATE INDEX IF NOT EXISTS watch_images_data  ON watch_images USING BTREE("data");

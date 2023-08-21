@@ -90,7 +90,7 @@ diesel::table! {
         id -> Varchar,
         #[max_length = 36]
         watch_id -> Varchar,
-        data -> Nullable<Text>,
+        data -> Bytea,
     }
 }
 

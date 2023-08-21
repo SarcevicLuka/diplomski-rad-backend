@@ -1,6 +1,10 @@
 use async_trait::async_trait;
 use error::Error;
-use support::store::models::{post::{CreateNewPostData, Post}, watch::CreateNewWatchData};
+use support::store::models::{
+    post::{CreateNewPostData, Post}, 
+    watch::CreateNewWatchData, 
+    watch_images::CreateNewWatchImageData
+};
 
 use super::data::UserPostData;
 
@@ -15,4 +19,5 @@ pub trait CreatePostContract {
 pub trait PgRepositoryContract {
     async fn create_post(&self, post_data: CreateNewPostData) -> Result<Post, Error>;
     async fn create_watch(&self, watch_data: CreateNewWatchData) -> Result<String, Error>;
+    async fn create_watch_image(&self, watch_image_data: CreateNewWatchImageData) -> Result<String, Error>;
 }
