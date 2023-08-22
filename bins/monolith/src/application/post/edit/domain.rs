@@ -49,6 +49,8 @@ where
                 watch_data: watch, 
                 text: post.review, 
                 score: post.score,
+                num_of_likes: post.num_of_likes,
+                num_of_comments: post.num_of_comments,
                 created_at: post.created_at, 
                 updated_at: post.updated_at 
             }

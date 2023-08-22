@@ -61,6 +61,8 @@ diesel::table! {
         watch_id -> Varchar,
         review -> Text,
         score -> Int4,
+        num_of_likes -> Int4,
+        num_of_comments -> Int4,
         created_at -> Timestamptz,
         updated_at -> Timestamptz,
     }

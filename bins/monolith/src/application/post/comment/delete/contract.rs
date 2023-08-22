@@ -10,5 +10,6 @@ pub trait DeleteCommentContract {
 #[cfg_attr(test, mockall::automock)]
 #[async_trait]
 pub trait PgRepositoryContract {
-    async fn delete_comment(&self, comment_id: &str) -> Result<(), Error>;
+    async fn delete_comment(&self, comment_id: &str) -> Result<String, Error>;
+    async fn decrement_posts_comment(&self, post_id_id: &str) -> Result<usize, Error>;
 }

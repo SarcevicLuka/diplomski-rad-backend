@@ -1,6 +1,13 @@
 use async_trait::async_trait;
 use error::Error;
-use super::{contract::{CreateCommentContract, PgRepositoryContract}, data::UserCommentData};
+use diesel::result::Error as DieselError;
+use super::{
+    contract::{
+        CreateCommentContract, 
+        PgRepositoryContract
+    }, 
+    data::UserCommentData
+};
 use support::store::models::comment::{CreateNewCommentData, DisplayComment};
 
 pub struct CreateComment<
@@ -39,8 +46,17 @@ where
 
         let comment = self
             .repository
-            .create_comment(create_comment_data)
+            .create_comment(create_comment_data.clone())
             .await?;
+
+        let num_of_rows_incremented = self
+            .repository
+            .increment_posts_comment(&create_comment_data.post_id)
+            .await?;
+
+        if num_of_rows_incremented != 0 {
+            return Err(Error::Diesel(DieselError::NotFound));
+        }
 
         Ok(
             DisplayComment::from(comment)

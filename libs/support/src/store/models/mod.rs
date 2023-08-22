@@ -4,5 +4,5 @@ pub mod post_like;
 pub mod post;
 pub mod user_follow;
 pub mod user;
-pub mod watch;
 pub mod watch_images;
+pub mod watch;

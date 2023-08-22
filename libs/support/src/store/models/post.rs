@@ -20,6 +20,8 @@ pub struct Post {
     pub watch_id: String,
     pub review: String,
     pub score: i32,
+    pub num_of_likes: i32,
+    pub num_of_comments: i32,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
 }
@@ -88,6 +90,8 @@ pub struct DisplayPost {
     pub watch_data: Watch,
     pub text: String,
     pub score: i32,
+    pub num_of_likes: i32,
+    pub num_of_comments: i32,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
 }
@@ -128,6 +132,8 @@ pub fn testable(
         watch_id: watch_id.unwrap_or("watch_id").to_string(),
         review: review.unwrap_or("review").to_string(),
         score: score.unwrap_or(3),
+        num_of_likes: 0,
+        num_of_comments: 0,
         created_at: NaiveDateTime::parse_from_str("2023-04-19 08:00:00", "%Y-%m-%d %H:%M:%S")
             .unwrap(),
         updated_at: NaiveDateTime::parse_from_str("2023-04-19 08:00:00", "%Y-%m-%d %H:%M:%S")

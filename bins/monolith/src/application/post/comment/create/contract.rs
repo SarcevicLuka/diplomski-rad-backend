@@ -14,4 +14,5 @@ pub trait CreateCommentContract {
 #[async_trait]
 pub trait PgRepositoryContract {
     async fn create_comment(&self, comment_data: CreateNewCommentData) -> Result<Comment, Error>;
+    async fn increment_posts_comment(&self, post_id: &str) -> Result<usize, Error>;
 }

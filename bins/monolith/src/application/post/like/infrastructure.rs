@@ -1,10 +1,13 @@
 use std::sync::Arc;
 use async_trait::async_trait;
+use diesel::{ExpressionMethods, RunQueryDsl};
 use error::Error;
-use infrastructure::db::Postgres;
+use infrastructure::{
+    db::Postgres, 
+    schema::posts
+};
+use support::store::models::post_like::{PostLike, CreateNewPostLikeData};
 use super::contract::PgRepositoryContract;
-use support::store::models::post_like::PostLike;
-use support::store::models::post_like::CreateNewPostLikeData;
 
 pub struct PgRepository {
     pub pg_pool: Arc<Postgres>,
@@ -44,5 +47,31 @@ impl PgRepositoryContract for PgRepository {
         };
 
         PostLike::delete(new_post_like_data, conn)
+    }
+
+    async fn increment_posts_like(
+        &self,
+        post_id: &str
+    ) -> Result<usize, Error> {
+        let mut conn = self.pg_pool.connection()?;
+
+        diesel::update(posts::table)
+            .filter(posts::id.eq(post_id))
+            .set(posts::num_of_comments.eq(posts::num_of_comments + 1))
+            .execute(&mut conn)
+            .map_err(Error::from)
+    }
+
+    async fn decrement_posts_like(
+        &self,
+        post_id: &str
+    ) -> Result<usize, Error> {
+        let mut conn = self.pg_pool.connection()?;
+
+        diesel::update(posts::table)
+            .filter(posts::id.eq(post_id))
+            .set(posts::num_of_comments.eq(posts::num_of_comments + 1))
+            .execute(&mut conn)
+            .map_err(Error::from)
     }
 }
