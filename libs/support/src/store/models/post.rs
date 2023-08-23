@@ -1,5 +1,5 @@
 use chrono::NaiveDateTime;
-use diesel::{Insertable, Queryable, RunQueryDsl, QueryDsl, ExpressionMethods};
+use diesel::{Insertable, Queryable, RunQueryDsl, QueryDsl, ExpressionMethods, prelude::Identifiable, Selectable};
 use infrastructure::{
     db::DbConnection,
     schema::{posts, posts::dsl::posts as edit_post}
@@ -10,7 +10,7 @@ use serde::{Serialize, Deserialize};
 use super::watch::Watch;
 
 /// Struct for holding post data fron database
-#[derive(Insertable, Queryable, Serialize, Deserialize, PartialEq, Eq, Debug, Clone)]
+#[derive(Insertable, Queryable, Serialize, Identifiable, Selectable, Deserialize, PartialEq, Eq, Debug, Clone)]
 #[diesel(table_name = posts)]
 #[diesel(treat_none_as_null = true)]
 #[serde(rename_all = "camelCase")]
@@ -56,6 +56,15 @@ impl Post {
         posts::table
             .filter(posts::id.eq(id))
             .select(posts::watch_id)
+            .get_result(connection)
+            .map_err(Error::from)
+    }
+
+    /// Helper method to find post creator id
+    pub fn get_creator_id(id: &str, connection: &mut DbConnection) -> Result<String, Error> {
+        posts::table
+            .filter(posts::id.eq(id))
+            .select(posts::user_id)
             .get_result(connection)
             .map_err(Error::from)
     }

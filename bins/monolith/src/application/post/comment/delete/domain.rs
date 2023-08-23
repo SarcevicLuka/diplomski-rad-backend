@@ -28,7 +28,7 @@ where
             .decrement_posts_comment(&post_id)
             .await?;
 
-        if num_of_rows_decremented != 0 {
+        if num_of_rows_decremented == 0 {
             return Err(Error::Diesel(DieselError::NotFound));
         }
 

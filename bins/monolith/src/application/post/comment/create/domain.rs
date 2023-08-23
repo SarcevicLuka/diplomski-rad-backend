@@ -54,7 +54,7 @@ where
             .increment_posts_comment(&create_comment_data.post_id)
             .await?;
 
-        if num_of_rows_incremented != 0 {
+        if num_of_rows_incremented == 0 {
             return Err(Error::Diesel(DieselError::NotFound));
         }
 

@@ -1,5 +1,5 @@
 use chrono::NaiveDateTime;
-use diesel::{Insertable, Queryable, RunQueryDsl, QueryDsl, ExpressionMethods};
+use diesel::{Insertable, Queryable, RunQueryDsl, QueryDsl, ExpressionMethods, prelude::Identifiable, Selectable};
 use infrastructure::{
     db::DbConnection,
     schema::users
@@ -8,7 +8,7 @@ use error::Error;
 use std::str;
 use serde::{Serialize, Deserialize};
 
-#[derive(Insertable, Queryable, Serialize, Deserialize, PartialEq, Debug, Clone)]
+#[derive(Insertable, Queryable, Serialize, Deserialize, Identifiable, Selectable, PartialEq, Debug, Clone)]
 #[diesel(table_name = users)]
 #[diesel(treat_none_as_null = true)]
 #[serde(rename_all = "camelCase")]

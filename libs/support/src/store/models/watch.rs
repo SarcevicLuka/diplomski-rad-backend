@@ -1,5 +1,5 @@
 use chrono::NaiveDateTime;
-use diesel::{Insertable, Queryable, RunQueryDsl, QueryDsl, ExpressionMethods, AsChangeset};
+use diesel::{Insertable, Queryable, RunQueryDsl, QueryDsl, ExpressionMethods, AsChangeset, prelude::Identifiable, Selectable};
 use infrastructure::{
     db::DbConnection,
     schema::{watches, watches::dsl::watches as edit_watch}
@@ -7,7 +7,7 @@ use infrastructure::{
 use error::Error;
 use serde::{Serialize, Deserialize};
 
-#[derive(Insertable, Queryable, Serialize, Deserialize, PartialEq, Eq, Debug, Clone)]
+#[derive(Insertable, Queryable, Serialize, Deserialize, Identifiable, Selectable, PartialEq, Eq, Debug, Clone)]
 #[diesel(table_name = watches)]
 #[diesel(treat_none_as_null = true)]
 #[serde(rename_all = "camelCase")]

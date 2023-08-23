@@ -30,7 +30,7 @@ where
             .increment_posts_like(post_id)
             .await?;
 
-        if num_of_rows_incremented != 0 {
+        if num_of_rows_incremented == 0 {
             return Err(Error::Diesel(DieselError::NotFound));
         }
 
@@ -56,7 +56,7 @@ where
             .decrement_posts_like(post_id)
             .await?;
 
-        if num_of_rows_incremented != 0 {
+        if num_of_rows_incremented == 0 {
             return Err(Error::Diesel(DieselError::NotFound));
         }
 

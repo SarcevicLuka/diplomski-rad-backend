@@ -1,7 +1,8 @@
 use chrono::NaiveDateTime;
+use diesel::prelude::Queryable;
 use length_aware_paginator::Response;
 use serde::{Deserialize, Serialize};
-use support::store::models::{post::Post, watch::Watch};
+use support::store::models::{post::Post, watch::Watch, user::{User, DisplayUser}};
 use validr::*;
 
 /// Struct that holds users paginated pokedex
@@ -12,11 +13,11 @@ pub struct PaginatedPostsResponse {
     pub per_page: i64,
     pub total: i64,
     pub last_page: i64,
-    pub data: Vec<PostWithLikes>,
+    pub data: Vec<PostListResponse>,
 }
 
-impl From<Response<(Post, i64)>> for PaginatedPostsResponse {
-    fn from(source: Response<(Post, i64)>) -> Self {
+impl From<Response<(Option<Post>, Option<User>, Option<Watch>)>> for PaginatedPostsResponse {
+    fn from(source: Response<(Option<Post>, Option<User>, Option<Watch>)>) -> Self {
         Self {
             page: source.page,
             per_page: source.per_page,
@@ -25,8 +26,8 @@ impl From<Response<(Post, i64)>> for PaginatedPostsResponse {
             data: source
                 .data
                 .into_iter()
-                .map(PostWithLikes::from)
-                .collect::<Vec<PostWithLikes>>(),
+                .map(PostListResponse::from)
+                .collect::<Vec<PostListResponse>>(),
         }
     }
 }
@@ -34,15 +35,20 @@ impl From<Response<(Post, i64)>> for PaginatedPostsResponse {
 /// Struct that holds posts for the frontend
 #[derive(Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct PostWithLikes {
+pub struct PostListResponse {
     pub post: Post,
-    pub num_likes: i64
+    pub creator: DisplayUser,
+    pub watch_data: Watch,
 }
 
-impl From<(Post, i64)> for PostWithLikes {
-    fn from(source: (Post, i64)) -> Self {
-        let (post, num_likes) = source;
-        PostWithLikes { post, num_likes }
+impl From<(Option<Post>, Option<User>, Option<Watch>)> for PostListResponse {
+    fn from(source: (Option<Post>, Option<User>, Option<Watch>)) -> Self {
+        let (post, creator, watch_data) = source;
+        PostListResponse { 
+            post: post.unwrap(),
+            creator: DisplayUser::from(creator.unwrap()),
+            watch_data: watch_data.unwrap()
+        }
     }
 }
 
@@ -86,6 +92,14 @@ pub struct DisplayPostWithAvgScore {
     pub text: String,
     pub score: i32,
     pub avg_comment_score: f64,
+    pub creator: DisplayUser,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
+}
+
+#[derive(Queryable, PartialEq, Debug)]
+pub struct CombinedData {
+    post: Option<Post>,
+    user: Option<User>,
+    watch: Option<Watch>,
 }
