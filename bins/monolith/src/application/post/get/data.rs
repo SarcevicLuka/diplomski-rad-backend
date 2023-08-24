@@ -16,8 +16,8 @@ pub struct PaginatedPostsResponse {
     pub data: Vec<PostListResponse>,
 }
 
-impl From<Response<(Option<Post>, Option<User>, Option<Watch>)>> for PaginatedPostsResponse {
-    fn from(source: Response<(Option<Post>, Option<User>, Option<Watch>)>) -> Self {
+impl From<Response<CombinedData>> for PaginatedPostsResponse {
+    fn from(source: Response<CombinedData>) -> Self {
         Self {
             page: source.page,
             per_page: source.per_page,
@@ -41,13 +41,13 @@ pub struct PostListResponse {
     pub watch_data: Watch,
 }
 
-impl From<(Option<Post>, Option<User>, Option<Watch>)> for PostListResponse {
-    fn from(source: (Option<Post>, Option<User>, Option<Watch>)) -> Self {
-        let (post, creator, watch_data) = source;
+impl From<CombinedData> for PostListResponse {
+    fn from(source: CombinedData) -> Self {
+        //let (post, creator, watch_data) = source;
         PostListResponse { 
-            post: post.unwrap(),
-            creator: DisplayUser::from(creator.unwrap()),
-            watch_data: watch_data.unwrap()
+            post: source.post,
+            creator: DisplayUser::from(source.user.unwrap()),
+            watch_data: source.watch.unwrap()
         }
     }
 }
@@ -99,7 +99,7 @@ pub struct DisplayPostWithAvgScore {
 
 #[derive(Queryable, PartialEq, Debug)]
 pub struct CombinedData {
-    post: Option<Post>,
+    post: Post,
     user: Option<User>,
     watch: Option<Watch>,
 }

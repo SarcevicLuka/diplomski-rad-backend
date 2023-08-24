@@ -1,6 +1,6 @@
 use std::sync::Arc;
 use async_trait::async_trait;
-use diesel::{QueryDsl, RunQueryDsl, ExpressionMethods, SelectableHelper, JoinOnDsl};
+use diesel::{QueryDsl, RunQueryDsl, ExpressionMethods};
 use diesel::dsl::{sum, count};
 use chrono::{Duration, Utc};
 use error::Error;
@@ -61,98 +61,83 @@ impl PgRepositoryContract for PgRepository {
         )
     } 
 
-    ///// Fetches all users posts
-    //async fn get_users_posts_paginated(
-    //    &self,
-    //    user_id: &str,
-    //    attributes: GetPostsAttributes
-    //) -> Result<Response<(Option<Post>, Option<User>, Option<Watch>)>, Error> {
-//
-    //    let mut conn = self.pg_pool.connection()?;
-//
-    //    let mut query = 
-    //        posts::table
-    //            .left_join(users::table)
-    //            .left_join(watches::table)
-    //            .select((
-    //                Option::<Post>::as_select(),
-    //                Option::<User>::as_select(),
-    //                Option::<Watch>::as_select()
-    //            ))
-    //            .into_boxed();
-    //            
-    //    query = query
-    //        .filter(posts::user_id.eq(user_id))
-    //        .order_by(posts::created_at.desc());
-//
-    //    query
-    //        .page(attributes.page)
-    //        .per_page(attributes.per_page)
-    //        .paginate(&mut conn)
-    //        .map_err(Error::from)
-    //}
-//
-    ///// Fetches newest posts in the last 7 days for the feed
-    //async fn get_feed_newest_posts_paginated(
-    //    &self,
-    //    attributes: GetPostsAttributes
-    //) -> Result<Response<CombinedData>, Error> {
-    //    let mut conn = self.pg_pool.connection()?;
-//
-    //    let now = Utc::now().naive_utc();
-    //    let seven_days_ago = now - Duration::days(7);
-//
-    //    let mut query = 
-    //        posts::table
-    //            .left_join(users::table)
-    //            .left_join(watches::table)
-    //            .select((
-    //                Post::as_select(),
-    //                User::as_select(),
-    //                Watch::as_select()
-    //            ))
-    //            .into_boxed();
-    //            
-    //    query = query
-    //        .filter(posts::created_at.gt(seven_days_ago))
-    //        .order(posts::created_at.desc());
-//
-    //    query
-    //        .page(attributes.page)
-    //        .per_page(attributes.per_page)
-    //        .paginate(&mut conn)
-    //        .map_err(Error::from)
-    //}
-//
-    ///// Fetches best reviewed posts in the last 7 days for the feed
-    //async fn get_feed_best_reviewed_posts_paginated(
-    //    &self,
-    //    attributes: GetPostsAttributes
-    //) -> Result<Response<CombinedData>, Error> {
-    //    let mut conn = self.pg_pool.connection()?;
-//
-    //    let now = Utc::now().naive_utc();
-    //    let seven_days_ago = now - Duration::days(7);
-//
-    //    let mut query = 
-    //        posts::table
-    //            .left_join(users::table)
-    //            .left_join(watches::table)
-    //            .select((
-    //                Post::as_select(),
-    //                User::as_select(),
-    //                Watch::as_select()
-    //            ))
-    //            .into_boxed();
-    //            
-    //    query = query
-    //        .filter(posts::created_at.gt(seven_days_ago))
-    //        .order(posts::score.desc());
-//
-    //    query
-    //        .page(attributes.page)
-    //        .per_page(attributes.per_page)
-    //        .paginate(&mut conn)
-    //        .map_err(Error::from)
-    //}
+    /// Fetches all users posts
+    async fn get_users_posts_paginated(
+        &self,
+        user_id: &str,
+        attributes: GetPostsAttributes
+    ) -> Result<Response<CombinedData>, Error> {
+
+        let mut conn = self.pg_pool.connection()?;
+
+        let mut query = 
+            posts::table
+                .left_join(users::table)
+                .left_join(watches::table)
+                .into_boxed();
+                
+        query = query
+            .filter(posts::user_id.eq(user_id))
+            .order_by(posts::created_at.desc());
+
+        query
+            .page(attributes.page)
+            .per_page(attributes.per_page)
+            .paginate(&mut conn)
+            .map_err(Error::from)
+    }
+
+    /// Fetches newest posts in the last 7 days for the feed
+    async fn get_feed_newest_posts_paginated(
+        &self,
+        attributes: GetPostsAttributes
+    ) -> Result<Response<CombinedData>, Error> {
+        let mut conn = self.pg_pool.connection()?;
+
+        let now = Utc::now().naive_utc();
+        let seven_days_ago = now - Duration::days(7);
+
+        let mut query = 
+            posts::table
+                .left_join(users::table)
+                .left_join(watches::table)
+                .into_boxed();
+                
+        query = query
+            .filter(posts::created_at.gt(seven_days_ago))
+            .order(posts::created_at.desc());
+
+        query
+            .page(attributes.page)
+            .per_page(attributes.per_page)
+            .paginate(&mut conn)
+            .map_err(Error::from)
+    }
+
+    /// Fetches best reviewed posts in the last 7 days for the feed
+    async fn get_feed_best_reviewed_posts_paginated(
+        &self,
+        attributes: GetPostsAttributes
+    ) -> Result<Response<CombinedData>, Error> {
+        let mut conn = self.pg_pool.connection()?;
+
+        let now = Utc::now().naive_utc();
+        let seven_days_ago = now - Duration::days(7);
+
+        let mut query = 
+            posts::table
+                .left_join(users::table)
+                .left_join(watches::table)
+                .into_boxed();
+                
+        query = query
+            .filter(posts::created_at.gt(seven_days_ago))
+            .order(posts::score.desc());
+
+        query
+            .page(attributes.page)
+            .per_page(attributes.per_page)
+            .paginate(&mut conn)
+            .map_err(Error::from)
+    }
 }
