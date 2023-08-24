@@ -1,6 +1,7 @@
 use std::sync::Arc;
 use actix_web::{web, web::get};
 use infrastructure::db::Postgres;
+
 use super::{
     domain::GetUser, 
     infrastructure::PgRepository, http::handle_get_user
@@ -23,5 +24,6 @@ pub fn routes(
         .route(get().to(handle_get_user::<
             GetUser<PgRepository>
         >))
+        .wrap(crate::middleware::AuthLogin)
     );
 }

@@ -1,7 +1,9 @@
 use async_trait::async_trait;
 use error::Error;
-use support::store::models::user::DisplayUser;
-use super::contract::{PgRepositoryContract, GetUserContract};
+use super::{
+    contract::{PgRepositoryContract, GetUserContract},
+    data::UserInfoResponse
+};
 
 pub struct GetUser<
     A: PgRepositoryContract,
@@ -16,15 +18,29 @@ where
 {
     async fn get_user_by_id(
         &self,
+        auth_user_id: Option<String>,
         user_id: &str
-    ) -> Result<DisplayUser, Error> {
+    ) -> Result<UserInfoResponse, Error> {
+        let am_following =  match auth_user_id {
+            Some(id) => {
+                self
+                    .repository
+                    .am_following(&id, user_id)
+                    .await?
+            },
+            None => false
+        };
+
         let user = self
             .repository
             .get_user_by_id(user_id)
             .await?;
 
         Ok(
-            user
+            UserInfoResponse {
+                user_data: user,
+                am_following: am_following
+            }
         )
     }
 }
