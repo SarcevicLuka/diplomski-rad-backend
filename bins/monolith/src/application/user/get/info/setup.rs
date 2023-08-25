@@ -24,6 +24,5 @@ pub fn routes(
         .route(get().to(handle_get_user::<
             GetUser<PgRepository>
         >))
-        .wrap(crate::middleware::AuthLogin)
     );
 }
