@@ -1,12 +1,17 @@
 use std::sync::Arc;
 use async_trait::async_trait;
 use diesel::{QueryDsl, ExpressionMethods};
-use diesel::dsl::sql;
 use error::Error;
-use infrastructure::{db::Postgres, schema::posts};
+use infrastructure::{
+    db::Postgres, 
+    schema::{users, posts, watches}
+};
 use length_aware_paginator::{Response, Paginate};
-use support::store::models::post::Post;
-use super::{contract::PgRepositoryContract, data::UserPostsAttributes};
+use crate::application::post::get::data::CombinedData;
+use super::{
+    contract::PgRepositoryContract, 
+    data::UserPostsAttributes
+};
 
 pub struct PgRepository {
     pub pg_pool: Arc<Postgres>,
@@ -19,24 +24,13 @@ impl PgRepositoryContract for PgRepository {
         &self,
         user_id: &str,
         attributes: UserPostsAttributes
-    ) -> Result<Response<(Post, i64, i64)>, Error> {
-        use infrastructure::schema::{
-            post_likes::dsl::post_likes as post_likes_count,
-            comments::dsl::comments as comments_count
-        };
-
+    ) -> Result<Response<CombinedData>, Error> {
         let mut conn = self.pg_pool.connection()?;
 
         let mut query = 
             posts::table
-                .left_join(post_likes_count)
-                .left_join(comments_count)
-                .group_by(posts::id)
-                .select((
-                    posts::all_columns, 
-                    sql::<diesel::sql_types::BigInt>("COUNT(post_likes.id) as num_likes"),
-                    sql::<diesel::sql_types::BigInt>("COUNT(comments.id) as num_comments"),
-                ))
+                .left_join(users::table)
+                .left_join(watches::table)
                 .into_boxed();
 
         query = query

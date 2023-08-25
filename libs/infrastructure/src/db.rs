@@ -23,7 +23,7 @@ pub fn get_postgres_connection_pool() -> DbPool {
 //  pool is dead code because it is not used yet
 #[allow(dead_code)]
 pub struct Postgres {
-    pool: DbPool,
+    pub pool: DbPool,
 }
 
 impl Default for Postgres {

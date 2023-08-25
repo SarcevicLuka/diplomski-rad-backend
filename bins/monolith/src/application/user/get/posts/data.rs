@@ -1,7 +1,8 @@
 use length_aware_paginator::Response;
 use serde::{Deserialize, Serialize};
-use support::store::models::post::Post;
 use validr::*;
+
+use crate::application::post::get::data::{PostListResponse, CombinedData};
 
 /// Struct that holds users paginated pokedex
 #[derive(Clone, Serialize)]
@@ -11,11 +12,11 @@ pub struct PaginatedUsersPostsResponse {
     pub per_page: i64,
     pub total: i64,
     pub last_page: i64,
-    pub data: Vec<PostWithLikes>,
+    pub data: Vec<PostListResponse>,
 }
 
-impl From<Response<(Post, i64, i64)>> for PaginatedUsersPostsResponse {
-    fn from(source: Response<(Post, i64, i64)>) -> Self {
+impl From<Response<CombinedData>> for PaginatedUsersPostsResponse {
+    fn from(source: Response<CombinedData>) -> Self {
         Self {
             page: source.page,
             per_page: source.per_page,
@@ -24,33 +25,8 @@ impl From<Response<(Post, i64, i64)>> for PaginatedUsersPostsResponse {
             data: source
                 .data
                 .into_iter()
-                .map(PostWithLikes::from)
-                .collect::<Vec<PostWithLikes>>(),
-        }
-    }
-}
-
-/// Struct that holds posts for the frontend
-#[derive(Clone, Serialize, PartialEq, Eq, Debug)]
-#[serde(rename_all = "camelCase")]
-pub struct PostWithLikes {
-    pub post: Post,
-    pub num_likes: i64,
-    pub num_comments: i64
-}
-
-impl From<(Post, i64, i64)> for PostWithLikes {
-    fn from(source: (Post, i64, i64)) -> Self {
-        let (
-            post, 
-            num_likes, 
-            num_comments
-        ) = source;
-
-        PostWithLikes { 
-            post, 
-            num_likes, 
-            num_comments
+                .map(PostListResponse::from)
+                .collect::<Vec<PostListResponse>>(),
         }
     }
 }

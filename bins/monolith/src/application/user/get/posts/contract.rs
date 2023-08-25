@@ -1,7 +1,8 @@
 use async_trait::async_trait;
 use error::Error;
-use support::store::models::post::Post;
 use length_aware_paginator::Response;
+use crate::application::post::get::data::CombinedData;
+
 use super::data::{UserPostsAttributes, PaginatedUsersPostsResponse};
 
 #[cfg_attr(test, mockall::automock)]
@@ -13,5 +14,5 @@ pub trait GetPostsContract {
 #[cfg_attr(test, mockall::automock)]
 #[async_trait]
 pub trait PgRepositoryContract {
-    async fn get_users_posts_paginated(&self, user_id: &str, attibutes: UserPostsAttributes) -> Result<Response<(Post, i64, i64)>, Error>;
+    async fn get_users_posts_paginated(&self, user_id: &str, attibutes: UserPostsAttributes) -> Result<Response<CombinedData>, Error>;
 }
