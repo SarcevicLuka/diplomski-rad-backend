@@ -2,8 +2,13 @@ use chrono::NaiveDateTime;
 use diesel::prelude::Queryable;
 use length_aware_paginator::Response;
 use serde::{Deserialize, Serialize};
-use support::store::models::{post::Post, watch::Watch, user::{User, DisplayUser}};
+use support::store::models::{
+    post::Post, watch::Watch, 
+    user::{User, DisplayUser}, 
+    watch_images::WatchImage
+};
 use validr::*;
+use std::str;
 
 /// Struct that holds users paginated pokedex
 #[derive(Clone, Serialize)]
@@ -82,19 +87,28 @@ impl Validation for GetPostsAttributes {
     }
 }
 
-/// Struct for holding post data to be displayed
+/// Struct for holding post data with average comments score
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
-pub struct DisplayPostWithAvgScore {
+pub struct PostWithAvgScore {
     pub id: String,
     pub user_id: String,
-    pub watch_data: Watch,
     pub text: String,
     pub score: i32,
     pub avg_comment_score: f64,
-    pub creator: DisplayUser,
+    pub num_of_likes: i64,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
+}
+
+/// Struct for holding post data to be displayed
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct DisplayPostData {
+    pub post: PostWithAvgScore,
+    pub creator: DisplayUser,
+    pub watch_data: Watch,
+    pub watch_images: Vec<DisplayWatchImage>
 }
 
 #[derive(Queryable, PartialEq, Debug)]
@@ -102,4 +116,22 @@ pub struct CombinedData {
     post: Post,
     user: Option<User>,
     watch: Option<Watch>,
+}
+
+#[derive(Queryable, Serialize, Deserialize, PartialEq, Eq, Debug, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct DisplayWatchImage {
+    pub id: String,
+    pub watch_id: String,
+    pub data: String,
+}
+
+impl From<WatchImage> for DisplayWatchImage {
+    fn from(value: WatchImage) -> Self {
+        Self { 
+            id: value.id, 
+            watch_id: value.watch_id,
+            data: str::from_utf8(&value.data).unwrap().to_string()
+        }
+    }
 }
