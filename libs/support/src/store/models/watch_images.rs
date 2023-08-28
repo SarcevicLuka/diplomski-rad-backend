@@ -1,7 +1,10 @@
-use diesel::{Insertable, Queryable, RunQueryDsl};
+use diesel::{Insertable, Queryable, RunQueryDsl, ExpressionMethods};
 use error::Error;
 use infrastructure::{schema::watch_images, db::DbConnection};
 use serde::{Serialize, Deserialize};
+
+use diesel::QueryDsl;
+
 
 /// Struct for holding post data fron database
 #[derive(Insertable, Queryable, Serialize, Deserialize, PartialEq, Debug, Clone)]
@@ -20,6 +23,13 @@ impl WatchImage {
         diesel::insert_into(watch_images::table)
             .values(data)
             .get_result::<WatchImage>(&mut connection)
+            .map_err(Error::from)
+    }
+
+    pub fn get_post_images(watch_id: &str, connection: &mut DbConnection) -> Result<Vec<WatchImage>, Error> {
+        watch_images::table
+            .filter(watch_images::watch_id.eq(watch_id))
+            .get_results::<WatchImage>(connection)
             .map_err(Error::from)
     }
 }

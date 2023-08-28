@@ -1,5 +1,5 @@
 use chrono::NaiveDateTime;
-use diesel::{Insertable, Queryable, RunQueryDsl, ExpressionMethods, BoolExpressionMethods};
+use diesel::{Insertable, Queryable, RunQueryDsl, ExpressionMethods, BoolExpressionMethods, QueryDsl};
 use error::Error;
 use infrastructure::{schema::post_likes, db::DbConnection};
 use serde::{Serialize, Deserialize};
@@ -33,6 +33,14 @@ impl PostLike {
             .execute(&mut connection)
             .map_err(Error::from)
     }
+
+    pub fn get_post_likes(user_id: &str, mut connection: DbConnection) -> Result<Vec<PostLike>, Error> {
+        post_likes::table
+            .filter(post_likes::user_id.eq(user_id))
+            .order(post_likes::created_at.desc())
+            .get_results::<PostLike>(&mut connection)
+            .map_err(Error::from)
+        }
 }
 
 impl From<PostLike> for CreateNewPostLikeData {

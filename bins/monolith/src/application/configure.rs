@@ -26,7 +26,8 @@ fn user(
     crate::application::user::follow::setup::routes(postgres.clone(), cfg);
     crate::application::user::get::info::setup::routes(postgres.clone(), cfg);
     crate::application::user::get::posts::setup::routes(postgres.clone(), cfg);
-    crate::application::user::get::follows::setup::routes(postgres, cfg);
+    crate::application::user::get::follows::setup::routes(postgres.clone(), cfg);
+    crate::application::user::get::likes::setup::routes(postgres, cfg);
 }
 
 fn post(
