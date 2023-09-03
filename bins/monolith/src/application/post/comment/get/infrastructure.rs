@@ -1,11 +1,16 @@
 use std::sync::Arc;
 use async_trait::async_trait;
-use diesel::{QueryDsl, ExpressionMethods};
+use diesel::{QueryDsl, ExpressionMethods, JoinOnDsl};
 use error::Error;
-use infrastructure::{db::Postgres, schema::comments};
+use infrastructure::{
+    db::Postgres, 
+    schema::{comments, users}
+};
 use length_aware_paginator::{Response, Paginate};
-use support::store::models::comment::Comment;
-use super::{contract::PgRepositoryContract, data::UserCommentsAttributes};
+use super::{
+    contract::PgRepositoryContract, 
+    data::{UserCommentsAttributes, CommentData}
+};
 
 pub struct PgRepository {
     pub pg_pool: Arc<Postgres>,
@@ -18,13 +23,17 @@ impl PgRepositoryContract for PgRepository {
         &self,
         post_id: &str,
         attributes: UserCommentsAttributes
-    ) -> Result<Response<Comment>, Error> {
+    ) -> Result<Response<CommentData>, Error> {
         let mut conn = self.pg_pool.connection()?;
 
-        let query = 
+        let mut query = 
             comments::table
-                .into_boxed()
-                .filter(comments::post_id.eq(post_id));
+                .left_join(users::table.on(users::id.eq(comments::user_id)))
+                .into_boxed();
+
+        query = query
+            .filter(comments::post_id.eq(post_id))
+            .order(comments::created_at.desc());
 
         query
             .page(attributes.page)

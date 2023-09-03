@@ -49,7 +49,6 @@ pub struct PostListResponse {
 
 impl From<CombinedData> for PostListResponse {
     fn from(source: CombinedData) -> Self {
-        //let (post, creator, watch_data) = source;
         PostListResponse { 
             post: source.post,
             creator: DisplayUser::from(source.user.unwrap()),

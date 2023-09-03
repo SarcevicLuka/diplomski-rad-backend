@@ -24,6 +24,7 @@ diesel::table! {
         score -> Int4,
         created_at -> Timestamptz,
         updated_at -> Timestamptz,
+        num_of_likes -> Int4,
     }
 }
 

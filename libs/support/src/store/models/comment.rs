@@ -1,5 +1,5 @@
 use chrono::NaiveDateTime;
-use diesel::{Insertable, Queryable, RunQueryDsl, QueryDsl, ExpressionMethods, AsChangeset, Identifiable};
+use diesel::{Insertable, Queryable, RunQueryDsl, QueryDsl, ExpressionMethods, AsChangeset, Identifiable, Selectable};
 use infrastructure::{
     db::DbConnection,
     schema::{comments, comments::dsl::comments as edit_comment}
@@ -8,7 +8,7 @@ use error::Error;
 use serde::{Serialize, Deserialize};
 
 /// Struct for holding Comment data fron database
-#[derive(Insertable, Queryable, Identifiable, AsChangeset, Serialize, Deserialize, PartialEq, Debug, Clone)]
+#[derive(Insertable, Queryable, Identifiable, Selectable, AsChangeset, Serialize, Deserialize, PartialEq, Debug, Clone)]
 #[diesel(table_name = comments)]
 #[diesel(treat_none_as_null = true)]
 #[serde(rename_all = "camelCase")]
@@ -20,6 +20,7 @@ pub struct Comment {
     pub score: i32,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
+    pub num_of_likes: i32,
 }
 
 impl Comment {
@@ -65,6 +66,7 @@ impl From<Comment> for DisplayComment {
             post_id: value.post_id,
             text: value.text,
             score: value.score,
+            num_of_likes: value.num_of_likes,
             created_at: value.created_at,
             updated_at: value.updated_at
         }
@@ -81,6 +83,7 @@ pub struct DisplayComment {
     pub post_id: String,
     pub text: String,
     pub score: i32,
+    pub num_of_likes: i32,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
 }

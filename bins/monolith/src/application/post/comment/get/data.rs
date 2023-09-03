@@ -1,6 +1,7 @@
+use diesel::prelude::Queryable;
 use length_aware_paginator::Response;
 use serde::{Deserialize, Serialize};
-use support::store::models::comment::Comment;
+use support::store::models::{comment::Comment, user::{User, DisplayUser}};
 use validr::*;
 
 /// Struct that holds users paginated pokedex
@@ -11,19 +12,48 @@ pub struct PaginatedPostsCommentsResponse {
     pub per_page: i64,
     pub total: i64,
     pub last_page: i64,
-    pub data: Vec<Comment>,
+    pub data: Vec<DisplayCommentData>,
 }
 
-impl From<Response<Comment>> for PaginatedPostsCommentsResponse {
-    fn from(source: Response<Comment>) -> Self {
+impl From<Response<CommentData>> for PaginatedPostsCommentsResponse {
+    fn from(source: Response<CommentData>) -> Self {
         Self {
             page: source.page,
             per_page: source.per_page,
             total: source.total,
             last_page: source.last_page,
-            data: source.data,
+            data: source
+                .data
+                .into_iter()
+                .map(DisplayCommentData::from)
+                .collect::<Vec<DisplayCommentData>>(),
         }
     }
+}
+
+/// Struct that holds users paginated pokedex
+#[derive(Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct DisplayCommentData {
+    pub data: Comment,
+    pub creator: DisplayUser,
+}
+
+impl From<CommentData> for DisplayCommentData {
+    fn from(source: CommentData) -> Self {
+        DisplayCommentData { 
+            data: source.data, 
+            creator: DisplayUser::from(source.creator.unwrap())
+        }
+    }
+}
+
+/// Struct that holds users paginated pokedex
+#[derive(Clone, Serialize, Queryable)]
+#[serde(rename_all = "camelCase")]
+pub struct CommentData {
+    data: Comment,
+    creator: Option<User>,
 }
 
 /// Struct that holds users pagination attributes

@@ -1,8 +1,7 @@
 use async_trait::async_trait;
 use error::Error;
-use support::store::models::comment::Comment;
 use length_aware_paginator::Response;
-use super::data::{UserCommentsAttributes, PaginatedPostsCommentsResponse};
+use super::data::{UserCommentsAttributes, PaginatedPostsCommentsResponse, CommentData};
 
 #[cfg_attr(test, mockall::automock)]
 #[async_trait]
@@ -13,5 +12,5 @@ pub trait GetCommentsContract {
 #[cfg_attr(test, mockall::automock)]
 #[async_trait]
 pub trait PgRepositoryContract {
-    async fn get_post_comments_paginated(&self, post_id: &str, attributes: UserCommentsAttributes) -> Result<Response<Comment>, Error>;
+    async fn get_post_comments_paginated(&self, post_id: &str, attributes: UserCommentsAttributes) -> Result<Response<CommentData>, Error>;
 }
