@@ -1,5 +1,6 @@
 use async_trait::async_trait;
 use error::Error;
+use diesel::result::Error as DieselError;
 use super::contract::{LikeCommentContract, PgRepositoryContract};
 use support::store::models::comment_like::CommentLike;
 
@@ -24,6 +25,15 @@ where
             .like_comment(user_id, comment_id)
             .await?;
 
+        let num_of_rows_incremented = self
+            .repository
+            .increment_comment_like(comment_id)
+            .await?;
+
+        if num_of_rows_incremented == 0 {
+            return Err(Error::Diesel(DieselError::NotFound));
+        }
+
         Ok(comment_like)
     }
 
@@ -39,6 +49,15 @@ where
 
         if num_of_deleted_rows == 0 {
             return Err(Error::Request("User or comment id is invalid".to_string()));
+        }
+
+        let num_of_rows_decremented = self
+            .repository
+            .decrement_comment_like(comment_id)
+            .await?;
+
+        if num_of_rows_decremented == 0 {
+            return Err(Error::Diesel(DieselError::NotFound));
         }
 
         Ok(())

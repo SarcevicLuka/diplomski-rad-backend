@@ -51,12 +51,12 @@ where
             return Err(Error::Request("User or post id is invalid".to_string()));
         }
 
-        let num_of_rows_incremented = self
+        let num_of_rows_decremented = self
             .repository
             .decrement_posts_like(post_id)
             .await?;
 
-        if num_of_rows_incremented == 0 {
+        if num_of_rows_decremented == 0 {
             return Err(Error::Diesel(DieselError::NotFound));
         }
 
