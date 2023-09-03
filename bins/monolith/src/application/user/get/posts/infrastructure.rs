@@ -4,7 +4,7 @@ use diesel::{QueryDsl, ExpressionMethods};
 use error::Error;
 use infrastructure::{
     db::Postgres, 
-    schema::{users, posts, watches}
+    schema::{users, posts, watches, post_likes}
 };
 use length_aware_paginator::{Response, Paginate};
 use crate::application::post::get::data::CombinedData;
@@ -31,6 +31,7 @@ impl PgRepositoryContract for PgRepository {
             posts::table
                 .left_join(users::table)
                 .left_join(watches::table)
+                .left_join(post_likes::table)
                 .into_boxed();
 
         query = query

@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 use support::store::models::{
     post::Post, watch::Watch, 
     user::{User, DisplayUser}, 
-    watch_images::WatchImage
+    watch_images::WatchImage, post_like::PostLike
 };
 use validr::*;
 use std::str;
@@ -44,6 +44,7 @@ pub struct PostListResponse {
     pub post: Post,
     pub creator: DisplayUser,
     pub watch_data: Watch,
+    pub is_liked: bool,
 }
 
 impl From<CombinedData> for PostListResponse {
@@ -52,7 +53,11 @@ impl From<CombinedData> for PostListResponse {
         PostListResponse { 
             post: source.post,
             creator: DisplayUser::from(source.user.unwrap()),
-            watch_data: source.watch.unwrap()
+            watch_data: source.watch.unwrap(),
+            is_liked: match source.like {
+                Some(_post_like) => true,
+                None => false,
+            }
         }
     }
 }
@@ -97,6 +102,7 @@ pub struct PostWithAvgScore {
     pub score: i32,
     pub avg_comment_score: f64,
     pub num_of_likes: i64,
+    pub is_liked_by_user: bool,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
 }
@@ -116,6 +122,7 @@ pub struct CombinedData {
     post: Post,
     user: Option<User>,
     watch: Option<Watch>,
+    like: Option<PostLike>
 }
 
 #[derive(Queryable, Serialize, Deserialize, PartialEq, Eq, Debug, Clone)]

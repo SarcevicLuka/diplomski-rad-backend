@@ -1,7 +1,7 @@
 use std::sync::Arc;
 use async_trait::async_trait;
-use diesel::{QueryDsl, RunQueryDsl, ExpressionMethods};
-use diesel::dsl::{sum, count};
+use diesel::{QueryDsl, RunQueryDsl, ExpressionMethods, JoinOnDsl, BoolExpressionMethods, select};
+use diesel::dsl::{sum, count, exists};
 use chrono::{Duration, Utc};
 use error::Error;
 use std::str;
@@ -33,8 +33,10 @@ impl PgRepositoryContract for PgRepository {
     /// Fetches post by id
     async fn get_post(
         &self,
+        user_id: Option<String>,
         post_id: &str
     ) -> Result<DisplayPostData, Error> {
+        let user_id = user_id.unwrap_or(String::from(""));
         let mut conn = self.pg_pool.connection()?;
 
         let post = Post::get_by_id(post_id, &mut conn)?;
@@ -54,6 +56,13 @@ impl PgRepositoryContract for PgRepository {
             .select((sum(comments::score), count(comments::id)))
             .filter(comments::post_id.eq(post_id))
             .get_result::<(Option<i64>, i64)>(&mut conn)?;
+
+        let is_liked_by_user = 
+            select(exists(
+                post_likes::table.filter(post_likes::user_id.eq(user_id)
+                .and(post_likes::post_id.eq(post_id)))
+            ))
+            .get_result::<bool>(&mut conn)?;
 
         let num_of_likes = post_likes::table
             .select(count(post_likes::id))
@@ -75,6 +84,7 @@ impl PgRepositoryContract for PgRepository {
             score: post.score,
             avg_comment_score: avg_rounded,
             num_of_likes,
+            is_liked_by_user,
             created_at: post.created_at,
             updated_at: post.updated_at,
         };
@@ -87,7 +97,7 @@ impl PgRepositoryContract for PgRepository {
                 watch_images: display_watch_images
             }
         )
-    } 
+    }
 
     /// Fetches all users posts
     async fn get_users_posts_paginated(
@@ -102,6 +112,7 @@ impl PgRepositoryContract for PgRepository {
             posts::table
                 .left_join(users::table)
                 .left_join(watches::table)
+                .left_join(post_likes::table)
                 .into_boxed();
                 
         query = query
@@ -118,8 +129,10 @@ impl PgRepositoryContract for PgRepository {
     /// Fetches newest posts in the last 7 days for the feed
     async fn get_feed_newest_posts_paginated(
         &self,
+        user_id: Option<String>,
         attributes: GetPostsAttributes
     ) -> Result<Response<CombinedData>, Error> {
+        let user_id = user_id.unwrap_or(String::from(""));
         let mut conn = self.pg_pool.connection()?;
 
         let now = Utc::now().naive_utc();
@@ -129,6 +142,9 @@ impl PgRepositoryContract for PgRepository {
             posts::table
                 .left_join(users::table)
                 .left_join(watches::table)
+                .left_join(post_likes::table.on(
+                    posts::id.eq(post_likes::post_id).and(post_likes::user_id.eq(&user_id))
+                ))
                 .into_boxed();
                 
         query = query
@@ -145,8 +161,10 @@ impl PgRepositoryContract for PgRepository {
     /// Fetches best reviewed posts in the last 7 days for the feed
     async fn get_feed_best_reviewed_posts_paginated(
         &self,
+        user_id: Option<String>,
         attributes: GetPostsAttributes
     ) -> Result<Response<CombinedData>, Error> {
+        let user_id = user_id.unwrap_or(String::from(""));
         let mut conn = self.pg_pool.connection()?;
 
         let now = Utc::now().naive_utc();
@@ -156,6 +174,9 @@ impl PgRepositoryContract for PgRepository {
             posts::table
                 .left_join(users::table)
                 .left_join(watches::table)
+                .left_join(post_likes::table.on(
+                    posts::id.eq(post_likes::post_id).and(post_likes::user_id.eq(&user_id))
+                ))
                 .into_boxed();
                 
         query = query

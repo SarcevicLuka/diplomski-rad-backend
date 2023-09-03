@@ -18,11 +18,12 @@ where
 {
     async fn get_post(
         &self,
+        user_id: Option<String>,
         post_id: &str
     ) -> Result<DisplayPostData, Error> {
         let post = self
             .repository
-            .get_post(post_id)
+            .get_post(user_id, post_id)
             .await?;
 
         Ok(
@@ -44,22 +45,24 @@ where
 
     async fn get_feed_newest_posts_paginated(
         &self,
+        user_id: Option<String>,
         attibutes: GetPostsAttributes
     ) -> Result<PaginatedPostsResponse, Error> {
         self
             .repository
-            .get_feed_newest_posts_paginated(attibutes)
+            .get_feed_newest_posts_paginated(user_id, attibutes)
             .await
             .map(PaginatedPostsResponse::from)
     }
 
     async fn get_feed_best_reviewed_posts_paginated(
         &self,
+        user_id: Option<String>,
         attibutes: GetPostsAttributes
     ) -> Result<PaginatedPostsResponse, Error> {
         self
             .repository
-            .get_feed_best_reviewed_posts_paginated(attibutes)
+            .get_feed_best_reviewed_posts_paginated(user_id, attibutes)
             .await
             .map(PaginatedPostsResponse::from)
     }
