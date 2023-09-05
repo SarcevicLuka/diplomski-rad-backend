@@ -15,12 +15,13 @@ where
 {
     async fn get_post_comments_paginated(
         &self,
+        user_id: Option<String>,
         post_id: &str,
         attibutes: UserCommentsAttributes
     ) -> Result<PaginatedPostsCommentsResponse, Error> {
         self
             .repository
-            .get_post_comments_paginated(post_id, attibutes)
+            .get_post_comments_paginated(user_id, post_id, attibutes)
             .await
             .map(PaginatedPostsCommentsResponse::from)
     }

@@ -1,7 +1,7 @@
 use diesel::prelude::Queryable;
 use length_aware_paginator::Response;
 use serde::{Deserialize, Serialize};
-use support::store::models::{comment::Comment, user::{User, DisplayUser}};
+use support::store::models::{comment::Comment, user::{User, DisplayUser}, post_like::PostLike};
 use validr::*;
 
 /// Struct that holds users paginated pokedex
@@ -35,15 +35,20 @@ impl From<Response<CommentData>> for PaginatedPostsCommentsResponse {
 #[derive(Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct DisplayCommentData {
-    pub data: Comment,
+    pub comment: Comment,
     pub creator: DisplayUser,
+    pub is_liked: bool,
 }
 
 impl From<CommentData> for DisplayCommentData {
     fn from(source: CommentData) -> Self {
         DisplayCommentData { 
-            data: source.data, 
-            creator: DisplayUser::from(source.creator.unwrap())
+            comment: source.comment, 
+            creator: DisplayUser::from(source.creator.unwrap()),
+            is_liked: match source.like {
+                Some(_like) => true,
+                None => false,
+            }
         }
     }
 }
@@ -52,8 +57,9 @@ impl From<CommentData> for DisplayCommentData {
 #[derive(Clone, Serialize, Queryable)]
 #[serde(rename_all = "camelCase")]
 pub struct CommentData {
-    data: Comment,
+    comment: Comment,
     creator: Option<User>,
+    like: Option<PostLike>
 }
 
 /// Struct that holds users pagination attributes
