@@ -70,7 +70,7 @@ impl PgRepositoryContract for PgRepository {
 
         diesel::update(posts::table)
             .filter(posts::id.eq(post_id))
-            .set(posts::num_of_likes.eq(posts::num_of_likes + 1))
+            .set(posts::num_of_likes.eq(posts::num_of_likes - 1))
             .execute(&mut conn)
             .map_err(Error::from)
     }
