@@ -8,7 +8,8 @@ pub fn configure(
 ) {
     auth(postgres.clone(), cfg);
     user(postgres.clone(), cfg);
-    post(postgres, cfg);
+    post(postgres.clone(), cfg);
+    search(postgres, cfg);
 }
 
 fn auth(
@@ -45,4 +46,11 @@ fn post(
     crate::application::post::comment::edit::setup::routes(postgres.clone(), cfg);
     crate::application::post::comment::get::setup::routes(postgres.clone(), cfg);
     crate::application::post::comment::like::setup::routes(postgres, cfg);
+}
+
+fn search(
+    postgres: Arc<Postgres>,
+    cfg: &mut web::ServiceConfig
+) {
+    crate::application::search::users::setup::routes(postgres, cfg);
 }
