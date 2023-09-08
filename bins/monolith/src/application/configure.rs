@@ -52,5 +52,6 @@ fn search(
     postgres: Arc<Postgres>,
     cfg: &mut web::ServiceConfig
 ) {
-    crate::application::search::users::setup::routes(postgres, cfg);
+    crate::application::search::users::setup::routes(postgres.clone(), cfg);
+    crate::application::search::posts::setup::routes(postgres, cfg);
 }
