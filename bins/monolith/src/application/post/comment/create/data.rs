@@ -2,7 +2,7 @@ use std::vec;
 use validr::*;
 use serde::{Serialize, Deserialize};
 
-/// Struct for holding post data that user wants to create
+/// Struct for holding comment data that user wants to create
 #[derive(Serialize, Deserialize, PartialEq, Eq, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct UserCommentData {

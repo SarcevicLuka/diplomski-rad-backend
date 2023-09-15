@@ -181,8 +181,7 @@ impl PgRepositoryContract for PgRepository {
                 
         query = query
             .filter(posts::created_at.gt(seven_days_ago))
-            .order(posts::score.desc())
-            .order(posts::created_at.desc());
+            .order(posts::score.desc());
 
         query
             .page(attributes.page)

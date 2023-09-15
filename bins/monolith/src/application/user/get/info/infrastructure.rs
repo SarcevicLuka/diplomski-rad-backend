@@ -47,14 +47,18 @@ impl PgRepositoryContract for PgRepository {
                 .and(friendships::user_responding.eq(user_id))
             )
             .select(friendships::id)
-            .get_result::<String>(&mut conn)
-            .map_err(Error::from);
+            .get_result::<String>(&mut conn);
 
-        if friendship_id?.len() > 0 {
-            return Ok(true);
-        }
-        else {
-            return Ok(false)
+        match friendship_id  {
+            Ok(id) => {
+                if id.len() > 0 {
+                    return Ok(true);
+                }
+                else {
+                    return Ok(false);
+                };
+            },
+            Err(_e) => return Ok(false)
         };
     }
 }

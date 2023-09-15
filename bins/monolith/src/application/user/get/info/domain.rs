@@ -30,7 +30,7 @@ where
             },
             None => false
         };
-
+        debug!("Before user fetch");
         let user = self
             .repository
             .get_user_by_id(user_id)
